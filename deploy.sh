@@ -195,7 +195,7 @@ log_ok "Watchdog activo como servicio systemd"
 # ── 11. Cron de backup diario ─────────────────────────────────
 log_info "Configurando backup diario de base de datos..."
 # Usa docker compose exec para no depender del nombre del volumen
-BACKUP_CMD="0 3 * * * cd ${DEPLOY_DIR} && docker compose -f docker-compose.prod.yml exec -T backend sh -c 'cp /data/maqzone.db \"/backups/maqzone_\$(date +%%Y%%m%%d).db\"' && ls -t ${DEPLOY_DIR}/backups/maqzone_*.db 2>/dev/null | tail -n +8 | xargs rm -f >> /var/log/maqzone-backup.log 2>&1"
+BACKUP_CMD="0 3 * * * cd ${DEPLOY_DIR} && docker compose -f docker-compose.prod.yml exec -T backend sh -c 'sqlite3 /data/maqzone.db \".backup /backups/maqzone_\$(date +%%Y%%m%%d).db\"' && ls -t ${DEPLOY_DIR}/backups/maqzone_*.db 2>/dev/null | tail -n +8 | xargs rm -f >> /var/log/maqzone-backup.log 2>&1"
 (crontab -l 2>/dev/null | grep -v 'maqzone.*backup\|maqzone.*bkp'; echo "$BACKUP_CMD") | crontab -
 log_ok "Backup diario a las 3:00 AM (últimos 7 días en backups/)"
 

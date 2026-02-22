@@ -17,9 +17,20 @@ services:
         condition: service_healthy
       web:
         condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     restart: unless-stopped
     mem_limit: 128m
     memswap_limit: 128m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   backend:
     build:
@@ -46,6 +57,11 @@ services:
     restart: unless-stopped
     mem_limit: 128m
     memswap_limit: 128m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   web:
     build:
@@ -62,9 +78,20 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     restart: unless-stopped
     mem_limit: 256m
     memswap_limit: 256m
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   sqlite-data:

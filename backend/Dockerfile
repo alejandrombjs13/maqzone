@@ -8,7 +8,7 @@ COPY . .
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o /bin/maqzone-api ./cmd/api
 
 FROM alpine:3.20
-RUN apk add --no-cache ca-certificates curl
+RUN apk add --no-cache ca-certificates curl sqlite
 WORKDIR /app
 COPY --from=builder /bin/maqzone-api /usr/local/bin/maqzone-api
 ENV PORT=8080
