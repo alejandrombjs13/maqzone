@@ -19,7 +19,10 @@ dist/
 *.db-shm
 data/
 
-# Go
+# SQLite backups (creados por deploy.sh en el VPS)
+backups/
+
+# Go binary
 backend/maqzone-api
 backend/tmp/
 
@@ -45,5 +48,12 @@ passw
 # ngrok
 ngrok.yml
 
-# Misc
+# Logs (incluyendo watchdog.log)
 *.log
+
+# Documentos de empresa (no van en git)
+*.pdf
+*.docx
+*.xlsx
+*.zip
+*.rar

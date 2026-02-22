@@ -1,16 +1,24 @@
 #!/bin/bash
-set -e
-
 # ─────────────────────────────────────────────────────────────
 # MAQZONE — Script de despliegue
-# Uso: ./deploy.sh
+# Uso (primera vez): bash deploy.sh
+# Uso (actualizar):  git pull && bash deploy.sh
 # ─────────────────────────────────────────────────────────────
+set -e
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
+
+DEPLOY_DIR="$(cd "$(dirname "$0")" && pwd)"
+COMPOSE="docker compose -f ${DEPLOY_DIR}/docker-compose.prod.yml"
+
+log_ok()   { echo -e "${GREEN}✓ $1${NC}"; }
+log_info() { echo -e "${CYAN}▸ $1${NC}"; }
+log_warn() { echo -e "${YELLOW}⚠ $1${NC}"; }
+log_err()  { echo -e "${RED}✗ $1${NC}"; }
 
 echo ""
 echo -e "${CYAN}  ███╗   ███╗ █████╗  ██████╗ ███████╗ ██████╗ ███╗   ██╗███████╗${NC}"
@@ -20,141 +28,146 @@ echo -e "${CYAN}  ██║╚██╔╝██║██╔══██║█�
 echo -e "${CYAN}  ██║ ╚═╝ ██║██║  ██║╚██████╔╝███████╗╚██████╔╝██║ ╚████║███████╗${NC}"
 echo -e "${CYAN}  ╚═╝     ╚═╝╚═╝  ╚═╝ ╚══▀▀═╝ ╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝${NC}"
 echo ""
-echo -e "${GREEN}  Deploy script — producción${NC}"
-echo ""
 
-# ── 1. Verificar que corremos en Linux ───────────────────────
+# ── 1. Solo Linux ─────────────────────────────────────────────
 if [[ "$OSTYPE" != "linux"* ]]; then
-  echo -e "${RED}Este script es para Linux (tu VPS). En Mac/Windows usa solo para desarrollo.${NC}"
+  log_err "Este script es para Linux (tu VPS). En Mac usa docker-compose.yml para dev."
   exit 1
 fi
 
-# ── 2. Crear swap si el VPS tiene menos de 2GB RAM ───────────
+cd "$DEPLOY_DIR"
+
+# ── 2. Crear swap si hay poca RAM ─────────────────────────────
 TOTAL_RAM_MB=$(free -m | awk '/^Mem:/{print $2}')
 SWAP_MB=$(free -m | awk '/^Swap:/{print $2}')
 
 if [[ "$TOTAL_RAM_MB" -lt 2048 && "$SWAP_MB" -lt 512 ]]; then
-  echo -e "${YELLOW}RAM disponible: ${TOTAL_RAM_MB}MB — creando swap de 2GB para el build...${NC}"
+  log_info "RAM: ${TOTAL_RAM_MB}MB — creando swap de 2GB para el build..."
   fallocate -l 2G /swapfile 2>/dev/null || dd if=/dev/zero of=/swapfile bs=1M count=2048 status=none
-  chmod 600 /swapfile
-  mkswap /swapfile -q
-  swapon /swapfile
-  # Hacer el swap permanente
+  chmod 600 /swapfile && mkswap /swapfile -q && swapon /swapfile
   grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' >> /etc/fstab
-  echo -e "${GREEN}✓ Swap creado (2GB)${NC}"
+  log_ok "Swap 2GB creado"
 else
-  echo -e "${GREEN}✓ RAM suficiente (${TOTAL_RAM_MB}MB)${NC}"
+  log_ok "RAM disponible: ${TOTAL_RAM_MB}MB"
 fi
 
 # ── 3. Instalar Docker si no está ────────────────────────────
-if ! command -v docker &> /dev/null; then
-  echo -e "${YELLOW}Docker no encontrado. Instalando...${NC}"
+if ! command -v docker &>/dev/null; then
+  log_info "Instalando Docker..."
   curl -fsSL https://get.docker.com | sh
-  systemctl enable docker
-  systemctl start docker
-  echo -e "${GREEN}✓ Docker instalado${NC}"
+  systemctl enable docker && systemctl start docker
+  log_ok "Docker instalado"
 else
-  echo -e "${GREEN}✓ Docker ya instalado ($(docker --version | cut -d' ' -f3 | tr -d ','))${NC}"
+  log_ok "Docker $(docker --version | grep -oP '\d+\.\d+\.\d+' | head -1) disponible"
 fi
 
 # ── 4. Crear .env si no existe ────────────────────────────────
-if [ ! -f .env ]; then
+if [ ! -f "${DEPLOY_DIR}/.env" ]; then
   echo ""
-  echo -e "${CYAN}Configurando variables de entorno...${NC}"
+  log_info "Configurando variables de entorno..."
   echo ""
 
-  # Dominio
-  read -p "  Tu dominio (sin https://, ej: maqzone.mx): " DOMAIN_INPUT
+  read -p "  Dominio sin https:// (ej: maqzone.mx): " DOMAIN_INPUT
   while [[ -z "$DOMAIN_INPUT" ]]; do
-    echo -e "${RED}  El dominio no puede estar vacío.${NC}"
-    read -p "  Tu dominio: " DOMAIN_INPUT
+    log_warn "El dominio no puede estar vacío."
+    read -p "  Dominio: " DOMAIN_INPUT
   done
 
-  # Generar secrets automáticamente
   ADMIN_TOKEN_GEN=$(openssl rand -hex 32)
   JWT_SECRET_GEN=$(openssl rand -hex 64)
 
-  cat > .env <<EOF
+  cat > "${DEPLOY_DIR}/.env" <<EOF
 DOMAIN=${DOMAIN_INPUT}
 ADMIN_TOKEN=${ADMIN_TOKEN_GEN}
 JWT_SECRET=${JWT_SECRET_GEN}
 EOF
 
   echo ""
-  echo -e "${GREEN}✓ Archivo .env creado${NC}"
-  echo ""
-  echo -e "${YELLOW}  ┌─────────────────────────────────────────────┐${NC}"
-  echo -e "${YELLOW}  │  GUARDA ESTOS DATOS EN UN LUGAR SEGURO      │${NC}"
-  echo -e "${YELLOW}  ├─────────────────────────────────────────────┤${NC}"
-  echo -e "${YELLOW}  │  Dominio:     ${DOMAIN_INPUT}${NC}"
-  echo -e "${YELLOW}  │  ADMIN_TOKEN: ${ADMIN_TOKEN_GEN}  │${NC}"
-  echo -e "${YELLOW}  └─────────────────────────────────────────────┘${NC}"
+  echo -e "${GREEN}  ┌──────────────────────────────────────────────────────┐${NC}"
+  echo -e "${GREEN}  │  GUARDA ESTO EN UN LUGAR SEGURO — NO LO COMPARTAS   │${NC}"
+  echo -e "${GREEN}  ├──────────────────────────────────────────────────────┤${NC}"
+  echo -e "${GREEN}  │  Dominio:     ${DOMAIN_INPUT}                        ${NC}"
+  echo -e "${GREEN}  │  ADMIN_TOKEN: ${ADMIN_TOKEN_GEN:0:24}...             ${NC}"
+  echo -e "${GREEN}  │  Admin login: admin@maqzone.mx / Admin123!           │${NC}"
+  echo -e "${GREEN}  │  (Cambia la contraseña al primer acceso)             │${NC}"
+  echo -e "${GREEN}  └──────────────────────────────────────────────────────┘${NC}"
   echo ""
   read -p "  Presiona Enter para continuar..."
 else
-  echo -e "${GREEN}✓ Archivo .env encontrado${NC}"
-  DOMAIN_INPUT=$(grep DOMAIN .env | cut -d'=' -f2)
+  log_ok ".env existente encontrado"
+  DOMAIN_INPUT=$(grep '^DOMAIN=' "${DEPLOY_DIR}/.env" | cut -d'=' -f2)
 fi
 
-# ── 5. Verificar que el .env tiene los campos requeridos ──────
+# ── 5. Validar .env ───────────────────────────────────────────
 for VAR in DOMAIN ADMIN_TOKEN JWT_SECRET; do
-  if ! grep -q "^${VAR}=" .env || [[ -z "$(grep "^${VAR}=" .env | cut -d'=' -f2)" ]]; then
-    echo -e "${RED}Error: falta la variable ${VAR} en tu .env${NC}"
+  VAL=$(grep "^${VAR}=" "${DEPLOY_DIR}/.env" 2>/dev/null | cut -d'=' -f2)
+  if [[ -z "$VAL" || "$VAL" == "cambia_esto"* ]]; then
+    log_err "Variable ${VAR} no configurada en .env"
     exit 1
   fi
 done
+log_ok "Variables de entorno válidas"
 
-# ── 6. Verificar que el dominio apunta a este servidor ────────
+# ── 6. Verificar DNS ──────────────────────────────────────────
 echo ""
-echo -e "${CYAN}Verificando DNS de ${DOMAIN_INPUT}...${NC}"
-SERVER_IP=$(curl -s https://api.ipify.org 2>/dev/null || curl -s https://ifconfig.me 2>/dev/null || echo "desconocida")
-DOMAIN_IP=$(getent hosts "${DOMAIN_INPUT}" 2>/dev/null | awk '{ print $1 }' | head -1 || echo "")
+log_info "Verificando DNS para ${DOMAIN_INPUT}..."
+SERVER_IP=$(curl -s --max-time 5 https://api.ipify.org 2>/dev/null || \
+            curl -s --max-time 5 https://ifconfig.me 2>/dev/null || echo "")
+DOMAIN_IP=$(getent hosts "${DOMAIN_INPUT}" 2>/dev/null | awk '{print $1}' | head -1 || echo "")
 
-if [[ "$DOMAIN_IP" == "$SERVER_IP" ]]; then
-  echo -e "${GREEN}✓ DNS correcto — ${DOMAIN_INPUT} → ${SERVER_IP}${NC}"
+if [[ -n "$SERVER_IP" && "$DOMAIN_IP" == "$SERVER_IP" ]]; then
+  log_ok "DNS correcto: ${DOMAIN_INPUT} → ${SERVER_IP}"
 elif [[ -z "$DOMAIN_IP" ]]; then
-  echo -e "${YELLOW}⚠ No se pudo resolver ${DOMAIN_INPUT}. Asegúrate de haber creado el registro DNS tipo A apuntando a: ${SERVER_IP}${NC}"
-  read -p "  Continuar de todas formas? (s/N): " CONTINUE
-  [[ "$CONTINUE" != "s" && "$CONTINUE" != "S" ]] && exit 0
+  log_warn "${DOMAIN_INPUT} no resuelve. Crea un registro A apuntando a: ${SERVER_IP:-<este servidor>}"
+  read -p "  Continuar sin DNS correcto? (s/N): " C && [[ "$C" != "s" && "$C" != "S" ]] && exit 0
 else
-  echo -e "${YELLOW}⚠ ${DOMAIN_INPUT} apunta a ${DOMAIN_IP} pero este servidor es ${SERVER_IP}${NC}"
-  echo -e "${YELLOW}  El SSL no funcionará hasta que el DNS esté correcto.${NC}"
-  read -p "  Continuar de todas formas? (s/N): " CONTINUE
-  [[ "$CONTINUE" != "s" && "$CONTINUE" != "S" ]] && exit 0
+  log_warn "${DOMAIN_INPUT} → ${DOMAIN_IP} (este servidor: ${SERVER_IP})"
+  log_warn "El SSL no funcionará hasta que el DNS apunte aquí."
+  read -p "  Continuar de todas formas? (s/N): " C && [[ "$C" != "s" && "$C" != "S" ]] && exit 0
 fi
 
-# ── 7. Levantar los servicios ─────────────────────────────────
+# ── 7. Crear directorio de backups ────────────────────────────
+mkdir -p "${DEPLOY_DIR}/backups"
+log_ok "Directorio backups/ listo"
+
+# ── 8. Construir y levantar ───────────────────────────────────
 echo ""
-echo -e "${CYAN}Construyendo y levantando servicios...${NC}"
-echo -e "${YELLOW}(Esto puede tardar 3-5 minutos la primera vez)${NC}"
+log_info "Construyendo y levantando servicios..."
+log_info "(Primera vez: 3-5 minutos)"
 echo ""
 
-docker compose -f docker-compose.prod.yml up -d --build
+$COMPOSE up -d --build
 
-# ── 8. Verificar que todo esté corriendo ─────────────────────
+# ── 9. Esperar y verificar salud ─────────────────────────────
 echo ""
-echo -e "${CYAN}Verificando servicios...${NC}"
-sleep 5
+log_info "Verificando servicios (espera 20s)..."
+sleep 20
 
-if docker compose -f docker-compose.prod.yml ps | grep -q "unhealthy\|Exit"; then
-  echo -e "${RED}Algunos servicios tienen problemas. Revisa los logs:${NC}"
-  echo "  docker compose -f docker-compose.prod.yml logs"
+BACKEND_OK=false
+for i in 1 2 3 4 5; do
+  CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "http://localhost/api/health" 2>/dev/null || echo "0")
+  if [[ "$CODE" == "200" ]]; then
+    BACKEND_OK=true
+    break
+  fi
+  sleep 5
+done
+
+if $COMPOSE ps 2>/dev/null | grep -q "unhealthy\|Exit\|exited"; then
+  echo ""
+  log_err "Algunos servicios tienen problemas:"
+  $COMPOSE ps
+  echo ""
+  echo "  Revisa logs: $COMPOSE logs --tail=50"
+elif ! $BACKEND_OK; then
+  log_warn "Backend tardando en arrancar. Verifica: $COMPOSE logs backend"
 else
-  echo ""
-  echo -e "${GREEN}  ┌─────────────────────────────────────────────────┐${NC}"
-  echo -e "${GREEN}  │  ✓ MAQZONE está corriendo en producción         │${NC}"
-  echo -e "${GREEN}  │                                                 │${NC}"
-  echo -e "${GREEN}  │  URL:   https://${DOMAIN_INPUT}            │${NC}"
-  echo -e "${GREEN}  │  Admin: https://${DOMAIN_INPUT}/admin      │${NC}"
-  echo -e "${GREEN}  │                                                 │${NC}"
-  echo -e "${GREEN}  │  (El SSL puede tardar ~1 minuto en activarse)   │${NC}"
-  echo -e "${GREEN}  └─────────────────────────────────────────────────┘${NC}"
-  echo ""
+  log_ok "Todos los servicios corriendo"
 fi
 
-# ── 9. Instalar watchdog como servicio systemd ────────────────
-echo -e "${CYAN}Instalando watchdog de resiliencia...${NC}"
-DEPLOY_DIR="$(pwd)"
+# ── 10. Watchdog como servicio systemd ────────────────────────
+echo ""
+log_info "Instalando watchdog de resiliencia..."
 cat > /etc/systemd/system/maqzone-watchdog.service <<SVCEOF
 [Unit]
 Description=MAQZONE Watchdog
@@ -174,24 +187,36 @@ StandardError=journal
 [Install]
 WantedBy=multi-user.target
 SVCEOF
-
 systemctl daemon-reload
 systemctl enable maqzone-watchdog
 systemctl restart maqzone-watchdog
-echo -e "${GREEN}✓ Watchdog activo (revisa: systemctl status maqzone-watchdog)${NC}"
+log_ok "Watchdog activo como servicio systemd"
 
-# ── 10. Backup automático de SQLite (cron diario) ─────────────
-echo -e "${CYAN}Configurando backup diario de base de datos...${NC}"
-BACKUP_CRON="0 3 * * * docker run --rm -v maqzone_sqlite-data:/data alpine sh -c 'cp /data/maqzone.db /data/maqzone_\$(date +\%Y\%m\%d).db && ls -t /data/maqzone_*.db | tail -n +8 | xargs rm -f 2>/dev/null' >> /var/log/maqzone-backup.log 2>&1"
-(crontab -l 2>/dev/null | grep -v 'maqzone.*backup'; echo "$BACKUP_CRON") | crontab -
-echo -e "${GREEN}✓ Backup diario a las 3:00 AM (guarda últimos 7 días)${NC}"
+# ── 11. Cron de backup diario ─────────────────────────────────
+log_info "Configurando backup diario de base de datos..."
+# Usa docker compose exec para no depender del nombre del volumen
+BACKUP_CMD="0 3 * * * cd ${DEPLOY_DIR} && docker compose -f docker-compose.prod.yml exec -T backend sh -c 'cp /data/maqzone.db \"/backups/maqzone_\$(date +%%Y%%m%%d).db\"' && ls -t ${DEPLOY_DIR}/backups/maqzone_*.db 2>/dev/null | tail -n +8 | xargs rm -f >> /var/log/maqzone-backup.log 2>&1"
+(crontab -l 2>/dev/null | grep -v 'maqzone.*backup\|maqzone.*bkp'; echo "$BACKUP_CMD") | crontab -
+log_ok "Backup diario a las 3:00 AM (últimos 7 días en backups/)"
 
+# ── Resumen final ─────────────────────────────────────────────
+echo ""
+echo -e "${GREEN}  ┌─────────────────────────────────────────────────────┐${NC}"
+echo -e "${GREEN}  │  MAQZONE desplegado en producción                   │${NC}"
+echo -e "${GREEN}  ├─────────────────────────────────────────────────────┤${NC}"
+echo -e "${GREEN}  │  Sitio:   https://${DOMAIN_INPUT}                   │${NC}"
+echo -e "${GREEN}  │  Admin:   https://${DOMAIN_INPUT}/admin             │${NC}"
+echo -e "${GREEN}  │  Login:   admin@maqzone.mx / Admin123!              │${NC}"
+echo -e "${GREEN}  │  (Cambia la contraseña en el primer acceso)         │${NC}"
+echo -e "${GREEN}  │                                                     │${NC}"
+echo -e "${GREEN}  │  SSL activo en ~1 minuto (Caddy auto-HTTPS)         │${NC}"
+echo -e "${GREEN}  └─────────────────────────────────────────────────────┘${NC}"
 echo ""
 echo -e "${CYAN}Comandos útiles:${NC}"
-echo "  Ver logs:      docker compose -f docker-compose.prod.yml logs -f"
+echo "  Logs en vivo:  docker compose -f docker-compose.prod.yml logs -f"
 echo "  Estado:        docker compose -f docker-compose.prod.yml ps"
-echo "  Actualizar:    git pull && docker compose -f docker-compose.prod.yml up -d --build"
+echo "  Actualizar:    git pull && bash deploy.sh"
 echo "  Apagar:        docker compose -f docker-compose.prod.yml down"
 echo "  Watchdog:      systemctl status maqzone-watchdog"
-echo "  Watchdog log:  tail -f watchdog.log"
+echo "  Backups:       ls -lh ${DEPLOY_DIR}/backups/"
 echo ""

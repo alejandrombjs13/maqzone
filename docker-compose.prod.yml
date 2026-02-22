@@ -36,6 +36,7 @@ services:
       - LOG_LEVEL=info
     volumes:
       - sqlite-data:/data
+      - ./backups:/backups
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
       interval: 15s
