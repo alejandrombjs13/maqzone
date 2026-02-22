@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# Build
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Database
+*.db
+*.db-wal
+*.db-shm
+data/
+
+# Go
+backend/maqzone-api
+backend/tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+test-results/
+playwright-report/
+
+# Secrets
+passw
+*.pem
+*.key
+
+# ngrok
+ngrok.yml
+
+# Misc
+*.log

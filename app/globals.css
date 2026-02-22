@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Dark theme (default) ────────────────────────────── */
+:root {
+  color-scheme: dark;
+  --bg-body: #0f1419;
+  --bg-steel: #1c2530;
+  --text-primary: #d6dce4;
+  --text-muted: rgba(214, 220, 228, 0.6);
+  --border-subtle: rgba(214, 220, 228, 0.12);
+  --glass-from: rgba(28, 37, 48, 0.85);
+  --glass-to: rgba(15, 20, 25, 0.9);
+  --accent: #3b82c4;
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+body {
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Text selection ────────────────────────────────────── */
+::selection {
+  background: rgba(59, 130, 196, 0.3);
+  color: #fff;
+}
+
+/* ── Focus rings (keyboard accessibility) ──────────────── */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Scrollbar (dark theme) ────────────────────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(214, 220, 228, 0.15);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(214, 220, 228, 0.3); }
+@supports (scrollbar-color: auto) {
+  * { scrollbar-color: rgba(214, 220, 228, 0.15) transparent; scrollbar-width: thin; }
+}
+
+/* ── Layout — full width, generous padding ────────────── */
+.section {
+  @apply mx-auto w-full px-5 sm:px-8 lg:px-16 xl:max-w-[1440px];
+}
+
+/* ── Glass panels ─────────────────────────────────────── */
+.glass {
+  background: linear-gradient(140deg, var(--glass-from), var(--glass-to));
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+/* ── Components ───────────────────────────────────────── */
+.tag {
+  @apply inline-block rounded-full border border-sand/30 px-3 py-1 text-xs uppercase tracking-[0.2em] text-sand/70;
+}
+
+.button-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-ember px-6 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:brightness-110 active:scale-95 disabled:opacity-50 disabled:pointer-events-none disabled:translate-y-0;
+}
+
+.button-ghost {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-sand/40 px-6 py-3 text-sm font-semibold text-sand transition hover:-translate-y-0.5 hover:border-sand active:scale-95 disabled:opacity-50 disabled:pointer-events-none disabled:translate-y-0;
+}
+
+.card {
+  background-color: var(--bg-steel);
+  border: 1px solid var(--border-subtle);
+  @apply rounded-3xl p-5 shadow-lg sm:p-6;
+}
+
+.gradient-text {
+  background: linear-gradient(120deg, #3b82c4 0%, #8aa0bc 50%, #2558a6 100%);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* ── Form inputs ────────────────────────────────────────── */
+input, textarea, select {
+  font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(214, 220, 228, 0.35);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 196, 0.15);
+}
+
+/* ── Safe area for notched devices ──────────────────────── */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── Video overlay — strong gradient for text readability */
+.video-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(15, 20, 25, 0.3) 0%,
+    rgba(15, 20, 25, 0.92) 60%
+  );
+}
+
+/* ── Image card overlay for text readability ──────────── */
+.img-overlay {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(15, 20, 25, 0.8) 100%
+  );
+}
+
+/* ── Slogan text shadow for dramatic hero overlay ──────── */
+.slogan-text {
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.7), 0 0 60px rgba(15, 20, 25, 0.5);
+}
+
+/* ── Line clamping utility ─────────────────────────────── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

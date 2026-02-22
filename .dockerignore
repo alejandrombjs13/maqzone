@@ -1,0 +1,17 @@
+node_modules
+.next
+.git
+.gitignore
+Dockerfile
+docker-compose.yml
+docker-compose.prod.yml
+*.log
+data
+.env
+.env.local
+backend
+tests
+scripts
+*.md
+playwright-report
+test-results

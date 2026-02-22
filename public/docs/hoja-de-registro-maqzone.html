@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoja de Registro - MAQZONE</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────────── */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 11pt;
+      color: #1a1a1a;
+      background: #f5f5f5;
+      line-height: 1.45;
+    }
+
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      background: #fff;
+      padding: 18mm 20mm 15mm;
+    }
+
+    /* ── Header ───────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #111827;
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 6px;
+      margin-bottom: 6mm;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-placeholder {
+      width: 50px;
+      height: 50px;
+      background: #f59e0b;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      color: #111827;
+      letter-spacing: -1px;
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-name {
+      font-size: 22pt;
+      font-weight: 800;
+      letter-spacing: 2px;
+      line-height: 1.1;
+    }
+
+    .brand-tagline {
+      font-size: 7.5pt;
+      color: #d1d5db;
+      letter-spacing: 0.5px;
+    }
+
+    .header-contact {
+      text-align: right;
+      font-size: 8pt;
+      color: #d1d5db;
+      line-height: 1.6;
+    }
+
+    .header-contact strong {
+      color: #f59e0b;
+    }
+
+    /* ── Page Title ────────────────────────────────────── */
+    .page-title {
+      text-align: center;
+      font-size: 15pt;
+      font-weight: 700;
+      color: #111827;
+      border-bottom: 2.5px solid #f59e0b;
+      padding-bottom: 5px;
+      margin-bottom: 5mm;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 8.5pt;
+      color: #6b7280;
+      margin-top: -3mm;
+      margin-bottom: 5mm;
+    }
+
+    /* ── Form Fields ──────────────────────────────────── */
+    .fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3mm 6mm;
+      margin-bottom: 5mm;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 7.5pt;
+      font-weight: 600;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 1px;
+    }
+
+    .field .line {
+      border-bottom: 1.2px solid #9ca3af;
+      min-height: 22px;
+      padding: 2px 4px;
+      font-size: 10pt;
+    }
+
+    /* ── Sections ──────────────────────────────────────── */
+    .section {
+      margin-bottom: 4.5mm;
+    }
+
+    .section-title {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #111827;
+      background: #f3f4f6;
+      border-left: 4px solid #f59e0b;
+      padding: 4px 10px;
+      margin-bottom: 3mm;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Document Lists ───────────────────────────────── */
+    .doc-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 8mm;
+      margin-bottom: 4mm;
+    }
+
+    .doc-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .doc-list li {
+      font-size: 9pt;
+      padding: 2.5px 0 2.5px 18px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .doc-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 10px;
+      height: 10px;
+      border: 1.2px solid #9ca3af;
+      border-radius: 2px;
+    }
+
+    .doc-group-title {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 2mm;
+      padding-bottom: 1px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    /* ── Guarantee Table ──────────────────────────────── */
+    .guarantee-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 4mm;
+      font-size: 9pt;
+    }
+
+    .guarantee-table th {
+      background: #111827;
+      color: #fff;
+      padding: 6px 10px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .guarantee-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .guarantee-table tr:nth-child(even) td {
+      background: #f9fafb;
+    }
+
+    .guarantee-table .amount {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .paleta-white {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid #9ca3af;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-right: 4px;
+      background: #fff;
+    }
+
+    .paleta-yellow {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid #d97706;
+      border-radius: 3px;
+      vertical-align: middle;
+      margin-right: 4px;
+      background: #fbbf24;
+    }
+
+    /* ── Banking Box ──────────────────────────────────── */
+    .banking-box {
+      border: 1.5px solid #111827;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 4mm;
+    }
+
+    .banking-box .box-title {
+      font-size: 9pt;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 3mm;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .banking-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2mm 6mm;
+      font-size: 9pt;
+    }
+
+    .banking-grid .b-field {
+      display: flex;
+      gap: 4px;
+    }
+
+    .banking-grid .b-label {
+      font-weight: 600;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    .banking-grid .b-value {
+      flex: 1;
+      border-bottom: 1px dotted #9ca3af;
+      min-width: 60px;
+    }
+
+    /* ── Signature Block ──────────────────────────────── */
+    .signatures {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8mm;
+      margin-top: 8mm;
+    }
+
+    .sig-block {
+      text-align: center;
+    }
+
+    .sig-line {
+      border-top: 1.5px solid #1a1a1a;
+      margin-top: 30mm;
+      padding-top: 3px;
+      font-size: 8pt;
+      color: #374151;
+    }
+
+    /* ── Footer ───────────────────────────────────────── */
+    .footer {
+      margin-top: 6mm;
+      text-align: center;
+      font-size: 7pt;
+      color: #9ca3af;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 3mm;
+      line-height: 1.6;
+    }
+
+    .footer strong {
+      color: #374151;
+    }
+
+    /* ── Print Styles ─────────────────────────────────── */
+    @media print {
+      body {
+        background: #fff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .page {
+        width: 100%;
+        min-height: auto;
+        margin: 0;
+        padding: 12mm 15mm 10mm;
+        box-shadow: none;
+      }
+
+      .header {
+        background: #111827 !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .guarantee-table th {
+        background: #111827 !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .paleta-yellow {
+        background: #fbbf24 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .section-title {
+        background: #f3f4f6 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .guarantee-table tr:nth-child(even) td {
+        background: #f9fafb !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+    }
+
+    /* ── Screen shadow ────────────────────────────────── */
+    @media screen {
+      .page {
+        box-shadow: 0 2px 20px rgba(0,0,0,.12);
+        margin-top: 10mm;
+        margin-bottom: 10mm;
+        border-radius: 2px;
+      }
+    }
+
+    /* ── Note text ────────────────────────────────────── */
+    .note {
+      font-size: 8pt;
+      color: #6b7280;
+      font-style: italic;
+      margin-top: 1mm;
+      margin-bottom: 3mm;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ─── Header ──────────────────────────────────── -->
+  <div class="header">
+    <div class="header-brand">
+      <div class="logo-placeholder">MQ</div>
+      <div class="brand-text">
+        <span class="brand-name">MAQZONE</span>
+        <span class="brand-tagline">Subastas y Venta de Maquinaria Industrial</span>
+      </div>
+    </div>
+    <div class="header-contact">
+      <strong>Tel:</strong> +52 444 216 4550<br>
+      <strong>Email:</strong> contacto@maqzone.mx<br>
+      <strong>Web:</strong> www.maqzone.mx
+    </div>
+  </div>
+
+  <!-- ─── Title ───────────────────────────────────── -->
+  <h1 class="page-title">HOJA DE REGISTRO &mdash; MAQZONE</h1>
+  <p class="subtitle">Complete todos los campos con letra legible. Este formato es requisito indispensable para participar en nuestras subastas.</p>
+
+  <!-- ─── Registration Fields ─────────────────────── -->
+  <div class="section">
+    <div class="section-title">Datos del Participante</div>
+    <div class="fields">
+      <div class="field full">
+        <label>Raz&oacute;n Social / Nombre Completo</label>
+        <div class="line"></div>
+      </div>
+      <div class="field full">
+        <label>Representante Legal</label>
+        <div class="line"></div>
+      </div>
+      <div class="field">
+        <label>R.F.C.</label>
+        <div class="line"></div>
+      </div>
+      <div class="field">
+        <label>Tel&eacute;fono</label>
+        <div class="line"></div>
+      </div>
+      <div class="field full">
+        <label>Calle y N&uacute;mero</label>
+        <div class="line"></div>
+      </div>
+      <div class="field">
+        <label>Colonia</label>
+        <div class="line"></div>
+      </div>
+      <div class="field">
+        <label>Municipio / Alcald&iacute;a</label>
+        <div class="line"></div>
+      </div>
+      <div class="field">
+        <label>C.P.</label>
+        <div class="line"></div>
+      </div>
+      <div class="field">
+        <label>Ciudad</label>
+        <div class="line"></div>
+      </div>
+      <div class="field">
+        <label>Estado</label>
+        <div class="line"></div>
+      </div>
+      <div class="field">
+        <label>Celular</label>
+        <div class="line"></div>
+      </div>
+      <div class="field full">
+        <label>E-mail</label>
+        <div class="line"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Required Documents ──────────────────────── -->
+  <div class="section">
+    <div class="section-title">Documentaci&oacute;n Requerida</div>
+    <p class="note">Adjuntar copia legible de todos los documentos correspondientes al tipo de persona.</p>
+    <div class="doc-columns">
+      <div>
+        <p class="doc-group-title">Persona F&iacute;sica</p>
+        <ul class="doc-list">
+          <li>Copia de INE vigente (ambos lados)</li>
+          <li>R.F.C. (C&eacute;dula de Identificaci&oacute;n Fiscal)</li>
+          <li>Constancia de Situaci&oacute;n Fiscal</li>
+          <li>Comprobante de domicilio (no mayor a 3 meses)</li>
+          <li>Estado de cuenta bancario con CLABE interbancaria</li>
+        </ul>
+      </div>
+      <div>
+        <p class="doc-group-title">Persona Moral</p>
+        <ul class="doc-list">
+          <li>Acta Constitutiva</li>
+          <li>Poder Notarial del Representante Legal</li>
+          <li>R.F.C. de la empresa</li>
+          <li>Constancia de Situaci&oacute;n Fiscal</li>
+          <li>Comprobante de domicilio fiscal (no mayor a 3 meses)</li>
+          <li>INE del Representante Legal</li>
+          <li>Estado de cuenta bancario con CLABE interbancaria</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Participation Guarantees ────────────────── -->
+  <div class="section">
+    <div class="section-title">Garant&iacute;as de Participaci&oacute;n</div>
+    <p class="note">Seleccione el tipo de paleta de su inter&eacute;s. El dep&oacute;sito de garant&iacute;a es reembolsable en caso de no resultar ganador.</p>
+    <table class="guarantee-table">
+      <thead>
+        <tr>
+          <th style="width:30%">Tipo de Paleta</th>
+          <th style="width:28%">Dep&oacute;sito de Garant&iacute;a</th>
+          <th style="width:22%">Oportunidades de Compra</th>
+          <th style="width:20%">Seleccione</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="paleta-white"></span> <strong>Paleta Blanca</strong></td>
+          <td class="amount">$50,000.00 MXN</td>
+          <td style="text-align:center">5 oportunidades</td>
+          <td style="text-align:center"><span style="display:inline-block;width:14px;height:14px;border:1.5px solid #9ca3af;border-radius:3px;vertical-align:middle;"></span></td>
+        </tr>
+        <tr>
+          <td><span class="paleta-yellow"></span> <strong>Paleta Amarilla</strong></td>
+          <td class="amount">$100,000.00 MXN</td>
+          <td style="text-align:center">5 oportunidades</td>
+          <td style="text-align:center"><span style="display:inline-block;width:14px;height:14px;border:1.5px solid #9ca3af;border-radius:3px;vertical-align:middle;"></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ─── Banking Details ─────────────────────────── -->
+  <div class="section">
+    <div class="banking-box">
+      <div class="box-title">Datos Bancarios para Dep&oacute;sito de Garant&iacute;a</div>
+      <div class="banking-grid">
+        <div class="b-field">
+          <span class="b-label">Banco:</span>
+          <span class="b-value">&nbsp; (Por confirmar)</span>
+        </div>
+        <div class="b-field">
+          <span class="b-label">Beneficiario:</span>
+          <span class="b-value">&nbsp; MAQZONE</span>
+        </div>
+        <div class="b-field">
+          <span class="b-label">No. de Cuenta:</span>
+          <span class="b-value">&nbsp; (Por confirmar)</span>
+        </div>
+        <div class="b-field">
+          <span class="b-label">CLABE:</span>
+          <span class="b-value">&nbsp; (Por confirmar)</span>
+        </div>
+        <div class="b-field">
+          <span class="b-label">R.F.C.:</span>
+          <span class="b-value">&nbsp; (Por confirmar)</span>
+        </div>
+        <div class="b-field">
+          <span class="b-label">Referencia:</span>
+          <span class="b-value">&nbsp; Nombre del participante</span>
+        </div>
+      </div>
+    </div>
+    <p class="note">Favor de enviar comprobante de dep&oacute;sito o transferencia a contacto@maqzone.mx indicando nombre completo del participante.</p>
+  </div>
+
+  <!-- ─── Signatures ──────────────────────────────── -->
+  <div class="signatures">
+    <div class="sig-block">
+      <div class="sig-line">Nombre y Firma del Participante</div>
+    </div>
+    <div class="sig-block">
+      <div class="sig-line">Fecha de Registro</div>
+    </div>
+  </div>
+
+  <!-- ─── Footer ──────────────────────────────────── -->
+  <div class="footer">
+    <strong>MAQZONE</strong> &mdash; Subastas y Venta de Maquinaria Industrial<br>
+    Tel: +52 444 216 4550 &nbsp;|&nbsp; contacto@maqzone.mx &nbsp;|&nbsp; www.maqzone.mx<br>
+    Este documento es confidencial y para uso exclusivo de MAQZONE y el participante registrado.
+  </div>
+
+</div>
+
+</body>
+</html>

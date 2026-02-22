@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAQZONE - Terminos y Condiciones de la Subasta</title>
+    <style>
+        /* Reset and base */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #ffffff;
+            padding: 0;
+            margin: 0;
+        }
+
+        .document {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 50px 60px;
+        }
+
+        /* Header */
+        .doc-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 3px solid #c8102e;
+        }
+
+        .doc-header .company-name {
+            font-size: 28pt;
+            font-weight: 800;
+            color: #c8102e;
+            letter-spacing: 4px;
+            margin-bottom: 6px;
+        }
+
+        .doc-header .company-tagline {
+            font-size: 9pt;
+            color: #666;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .doc-header .doc-title {
+            font-size: 14pt;
+            font-weight: 700;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .doc-header .doc-subtitle {
+            font-size: 12pt;
+            font-weight: 700;
+            color: #333;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+
+        /* Section headings */
+        .section-heading {
+            font-size: 11pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #c8102e;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            padding-bottom: 6px;
+            border-bottom: 1.5px solid #e0e0e0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Clauses */
+        .clause {
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+
+        .clause-number {
+            font-weight: 700;
+            color: #333;
+            margin-right: 4px;
+        }
+
+        .clause p {
+            margin-bottom: 10px;
+        }
+
+        .clause-indent {
+            margin-left: 28px;
+        }
+
+        /* Bold emphasis */
+        .emphasis {
+            font-weight: 700;
+        }
+
+        .emphasis-underline {
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        /* Lists */
+        .doc-list {
+            margin: 10px 0 10px 48px;
+            list-style: disc;
+        }
+
+        .doc-list li {
+            margin-bottom: 6px;
+        }
+
+        .doc-list-alpha {
+            margin: 10px 0 10px 48px;
+            list-style: lower-alpha;
+        }
+
+        .doc-list-alpha li {
+            margin-bottom: 8px;
+        }
+
+        /* Sub-headings within clauses */
+        .sub-heading {
+            font-weight: 700;
+            margin-top: 12px;
+            margin-bottom: 6px;
+        }
+
+        /* Guarantee boxes */
+        .guarantee-box {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-left: 4px solid #c8102e;
+            padding: 14px 18px;
+            margin: 12px 0 12px 28px;
+            border-radius: 3px;
+        }
+
+        .guarantee-box .guarantee-title {
+            font-weight: 700;
+            font-size: 10.5pt;
+            color: #c8102e;
+            margin-bottom: 4px;
+        }
+
+        /* Bank info box */
+        .bank-box {
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 16px 20px;
+            margin: 12px 0 12px 28px;
+            border-radius: 3px;
+            font-size: 10pt;
+        }
+
+        .bank-box p {
+            margin-bottom: 3px;
+        }
+
+        .bank-box .bank-label {
+            font-weight: 600;
+            display: inline-block;
+            min-width: 110px;
+        }
+
+        /* Note box */
+        .note-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-left: 4px solid #f9a825;
+            padding: 14px 18px;
+            margin: 14px 0 14px 28px;
+            border-radius: 3px;
+            font-size: 10pt;
+        }
+
+        .note-box .note-label {
+            font-weight: 700;
+            color: #e65100;
+        }
+
+        /* Premium table */
+        .premium-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 12px 28px;
+            max-width: 600px;
+        }
+
+        .premium-table th {
+            background: #c8102e;
+            color: #fff;
+            padding: 10px 14px;
+            text-align: left;
+            font-size: 10pt;
+            font-weight: 600;
+        }
+
+        .premium-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 10pt;
+        }
+
+        .premium-table tr:nth-child(even) td {
+            background: #f8f8f8;
+        }
+
+        /* Contact section */
+        .contact-section {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px 24px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .contact-section .contact-title {
+            font-weight: 700;
+            font-size: 11pt;
+            color: #c8102e;
+            margin-bottom: 10px;
+        }
+
+        .contact-section a {
+            color: #c8102e;
+            text-decoration: none;
+        }
+
+        .contact-section a:hover {
+            text-decoration: underline;
+        }
+
+        /* Signature section */
+        .signature-section {
+            margin-top: 50px;
+            padding-top: 20px;
+        }
+
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 300px;
+            margin: 40px 0 6px 0;
+            display: block;
+        }
+
+        .signature-label {
+            font-size: 9.5pt;
+            color: #555;
+        }
+
+        /* Declaration form */
+        .declaration-form {
+            border: 2px solid #c8102e;
+            border-radius: 4px;
+            padding: 28px 28px 20px;
+            margin-top: 40px;
+            page-break-before: always;
+        }
+
+        .declaration-form .form-title {
+            font-size: 13pt;
+            font-weight: 700;
+            text-align: center;
+            color: #c8102e;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .declaration-form .form-field {
+            margin-bottom: 14px;
+        }
+
+        .declaration-form .form-field-label {
+            font-weight: 600;
+            font-size: 9.5pt;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .declaration-form .form-field-line {
+            border-bottom: 1px solid #999;
+            display: block;
+            height: 28px;
+            margin-top: 2px;
+        }
+
+        .declaration-form .form-signature-line {
+            border-top: 1px solid #333;
+            width: 280px;
+            margin: 50px 0 6px 0;
+        }
+
+        /* Footer */
+        .doc-footer {
+            margin-top: 40px;
+            padding-top: 16px;
+            border-top: 2px solid #c8102e;
+            text-align: center;
+            font-size: 8.5pt;
+            color: #888;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                font-size: 10pt;
+                background: #fff;
+            }
+
+            .document {
+                max-width: none;
+                padding: 30px 40px;
+            }
+
+            .doc-header {
+                border-bottom-color: #c8102e;
+            }
+
+            .section-heading {
+                page-break-after: avoid;
+            }
+
+            .clause {
+                page-break-inside: avoid;
+            }
+
+            .guarantee-box,
+            .bank-box,
+            .note-box {
+                page-break-inside: avoid;
+            }
+
+            .declaration-form {
+                page-break-before: always;
+                page-break-inside: avoid;
+            }
+
+            a {
+                color: #1a1a1a;
+                text-decoration: none;
+            }
+
+            .doc-footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+        }
+
+        @page {
+            margin: 2cm;
+            size: letter;
+        }
+    </style>
+</head>
+<body>
+    <div class="document">
+
+        <!-- Header -->
+        <div class="doc-header">
+            <div class="company-name">MAQZONE</div>
+            <div class="company-tagline">Subastas Industriales</div>
+            <div class="doc-title">Terminos Especificos de la Venta</div>
+            <div class="doc-subtitle">Terminos y Condiciones de la Subasta Presencial y por Internet</div>
+        </div>
+
+        <!-- 1. Introduction -->
+        <div class="clause">
+            <p>
+                <span class="clause-number">1.</span>
+                Los servicios proporcionados por <span class="emphasis">MAQZONE</span> (en adelante tambien identificado como "MAQZONE") estan regidos por estos terminos y condiciones, por lo que, <span class="emphasis">al obtener su registro como postor, usted esta de acuerdo y se obliga al cumplimiento de estos terminos y condiciones, asi como cualquier termino adicional que pueda ser aplicado por el vendedor o que se anuncie en la subasta.</span>
+            </p>
+        </div>
+
+        <!-- 2. Auction date placeholder -->
+        <div class="clause">
+            <p>
+                <span class="clause-number">2.</span>
+                La subasta se llevara a cabo por Internet en la fecha y hora indicadas en la convocatoria correspondiente, publicada en el sitio web de MAQZONE.
+            </p>
+        </div>
+
+        <!-- REGISTRO DE POSTORES -->
+        <h2 class="section-heading">Registro de Postores</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">3.</span>
+                Todos los posibles postores podran pre registrarse al evento enviando un correo electronico con sus documentos de participacion a <a href="mailto:contacto@maqzone.mx">contacto@maqzone.mx</a> o bien comunicandose via WhatsApp al numero <span class="emphasis">+52 444 216 4550</span>.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">4.</span>
+                Este registro se puede llevar a cabo en cualquier momento previo y/o durante la Subasta. Deberan enviar la siguiente documentacion:
+            </p>
+
+            <p class="sub-heading clause-indent">Personas Fisicas:</p>
+            <ul class="doc-list">
+                <li>Copia de identificacion oficial vigente (INE)</li>
+                <li>Copia del Registro Federal de Contribuyentes (RFC)</li>
+                <li>Constancia de situacion fiscal</li>
+                <li>Comprobante de domicilio no mayor a tres (3) meses</li>
+                <li>Copia de estado de cuenta bancario que incluya la cuenta CLABE, numero de cuenta y numero de sucursal</li>
+            </ul>
+
+            <p class="sub-heading clause-indent">Personas Morales:</p>
+            <ul class="doc-list">
+                <li>Copia del Acta Constitutiva de la empresa</li>
+                <li>Copia del documento notarial (Poder Notarial) donde se acredite la personalidad del representante legal</li>
+                <li>Copia del Registro Federal de Contribuyentes (RFC)</li>
+                <li>Constancia de situacion fiscal</li>
+                <li>Comprobante del domicilio fiscal no mayor a tres (3) meses</li>
+                <li>Copia de identificacion oficial vigente del Representante Legal (INE)</li>
+                <li>Copia de estado de cuenta bancario que incluya la cuenta CLABE, numero de cuenta y numero de sucursal</li>
+            </ul>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">5.</span>
+                Los interesados deberan enviar al correo electronico o WhatsApp especificados la informacion arriba mencionada indicando que desean realizar su participacion por internet o presencial.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">6.</span>
+                Una vez recibida y validada la informacion proporcionada por el postor, MAQZONE enviara al correo electronico registrado las claves de acceso y contrasenas necesarias para participar en la subasta correspondiente, junto con los terminos y condiciones especificos de la venta. El postor debera firmar los referidos terminos y condiciones y remitirlos escaneados a <a href="mailto:contacto@maqzone.mx">contacto@maqzone.mx</a>.
+            </p>
+            <p class="clause-indent">
+                En caso de que el postor no remita los documentos firmados, pero continue con el proceso de participacion, <span class="emphasis">se entendera que ha aceptado expresa e irrevocablemente los terminos y condiciones aplicables.</span> Dicha aceptacion tendra caracter vinculante y constituira un acuerdo legal entre el postor y MAQZONE, sin que pueda alegarse desconocimiento o falta de consentimiento, con fundamento a lo establecido en el <span class="emphasis-underline">articulo 78 del Codigo de Comercio.</span>
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">7.</span>
+                Las facturas se realizaran a nombre de las Personas Fisicas y/o Morales que se hayan registrado en la subasta y MAQZONE no esta obligado a realizar cambios para la emision de facturas a terceros.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">8.</span>
+                MAQZONE podra en cualquier momento, reservarse a su exclusivo criterio, el derecho de registrar a cualquier persona fisica o moral, sin responsabilidad alguna.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">9.</span>
+                Los precios en esta subasta son en pesos mexicanos.
+            </p>
+        </div>
+
+        <!-- GARANTIAS DE PARTICIPACION -->
+        <h2 class="section-heading">Garantias de Participacion</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">10.</span>
+                Para poder participar, el postor debera dejar en deposito garantias de participacion de acuerdo con lo siguiente:
+            </p>
+
+            <div class="guarantee-box">
+                <div class="guarantee-title">Paleta Blanca: $50,000.00 MXN (Cincuenta mil pesos)</div>
+                <p>Esta garantia le dara derecho para la adquisicion de hasta <span class="emphasis">cinco (5) lotes</span>. Si usted desea adquirir mas de cinco lotes, es necesario realizar el deposito de tantas garantias como sea requerido.</p>
+            </div>
+
+            <div class="guarantee-box">
+                <div class="guarantee-title">Paleta Amarilla: $100,000.00 MXN (Cien mil pesos)</div>
+                <p>Esta garantia le dara derecho para la adquisicion de hasta <span class="emphasis">cinco (5) lotes</span>. Si usted desea adquirir mas de cinco lotes, es necesario realizar el deposito de tantas garantias como sea requerido.</p>
+            </div>
+
+            <div class="note-box">
+                <span class="note-label">NOTA:</span> Se reitera que al realizar el deposito de su garantia y obtener su registro, asi como numero de paleta como participante, <span class="emphasis">usted esta de acuerdo y se obliga al cumplimiento de estos terminos y condiciones</span>, asi como cualquier termino adicional que pueda ser aplicado por el vendedor o que se anuncie en la subasta.
+            </div>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">11.</span>
+                Las garantias arriba mencionadas podran ser depositadas mediante transferencias o depositos bancarios a la siguiente cuenta:
+            </p>
+
+            <div class="bank-box">
+                <p><span class="bank-label">Banco:</span> [Por confirmar]</p>
+                <p><span class="bank-label">Beneficiario:</span> MAQZONE</p>
+                <p><span class="bank-label">Cuenta:</span> [Por confirmar]</p>
+                <p><span class="bank-label">CLABE:</span> [Por confirmar]</p>
+                <p><span class="bank-label">RFC:</span> [Por confirmar]</p>
+            </div>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">12.</span>
+                Los postores que decidan realizar el deposito de las garantias mediante transferencia bancaria deberan indicar como referencia su RFC. Una vez hecha la transferencia deberan enviar el comprobante a <a href="mailto:contacto@maqzone.mx">contacto@maqzone.mx</a> o al WhatsApp <span class="emphasis">+52 444 216 4550</span>.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">13.</span>
+                En caso de que el postor no adquiera durante la subasta ninguno de los lotes en venta, las transferencias y depositos bancarios se reembolsaran de manera integra a la cuenta bancaria que el postor nos haya indicado en sus documentos de participacion, en un periodo no mayor a <span class="emphasis">3 (tres) dias habiles.</span>
+            </p>
+        </div>
+
+        <!-- INSPECCION DE LOS BIENES -->
+        <h2 class="section-heading">Inspeccion de los Bienes</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">14.</span>
+                Los postores se obligan a examinar o inspeccionar los bienes solicitando previamente una cita, previo a la fecha de subasta en un horario de <span class="emphasis">10:00 a 16:00 hrs.</span> Las citas se deben solicitar con al menos <span class="emphasis">24 horas de anticipacion.</span>
+            </p>
+            <p class="clause-indent">
+                En todo momento deberan estar acompanados durante su estancia por personal de MAQZONE o personal del vendedor y se debera respetar la senalizacion para no entrar en areas restringidas.
+            </p>
+            <p class="clause-indent">
+                La omision o negativa a inspeccionar los bienes sera atribuible exclusivamente al postor, quien renuncia expresamente a invocar cualquier vicio, defecto o desperfecto en los bienes objeto de la subasta, si no realizo la inspeccion correspondiente. Reiterando que es responsabilidad del postor, verificar el bien antes de adquirirlo, <span class="emphasis-underline">sin posibilidad de retractacion posterior por discrepancias subjetivas entre sus expectativas y las condiciones reales de los bienes.</span>
+            </p>
+        </div>
+
+        <!-- PARTICIPACION EN LA SUBASTA -->
+        <h2 class="section-heading">Participacion en la Subasta</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">15.</span>
+                Los postores que hayan decidido participar por Internet, deberan conectarse al sitio web mediante el acceso proporcionado.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">16.</span>
+                Se podran realizar ofertas en ausencia. La oferta en ausencia es el importe maximo que ofrece el comprador por un bien. El subastador la tomara en consideracion para iniciar la venta a partir de ese precio. Si la oferta en ausencia no es superada por el resto de los postores, este sera declarado ganador del lote o de los lotes en cuestion.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">17.</span>
+                Todos los lotes de la subasta se venderan al postor que ofrezca la <span class="emphasis">postura mas alta</span>. Las posturas se realizan de manera anonima. MAQZONE se reserva el derecho de rechazar cualquier postura que sea solo de incremento minimo sobre la postura precedente, que no corresponda con el valor real del bien sujeto de la venta o que MAQZONE crea que fue hecha de manera ilegal o de mala fe. Ademas, MAQZONE o sus afiliados o subsidiarias, podran ofertar en la subasta a nombre de terceras personas. En el caso de una disputa entre los postores, MAQZONE puede, a su exclusivo criterio, aceptar lo que considere sea la postura final o solicitar mas posturas sobre el bien en disputa.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">18.</span>
+                <span class="emphasis">Todas las ventas realizadas a traves de MAQZONE son definitivas, irrevocables y no estan sujetas a cancelacion, devolucion ni reembolso, total o parcial, bajo ninguna circunstancia.</span> Una vez adjudicado un bien y realizado el pago correspondiente, el comprador acepta que no podra exigir la restitucion del bien ni la devolucion de cantidad alguna, independientemente del estado, funcionamiento, caracteristicas o cualquier otra condicion del bien adquirido.
+            </p>
+            <p class="clause-indent">
+                Asimismo, el comprador declara conocer y aceptar el estado material y juridico del bien al momento de realizar su puja, renunciando expresamente a invocar cualquier vicio, defecto, desperfecto o cualquier otra reclamacion derivada del estado del bien, en caso de no haber realizado la inspeccion previa correspondiente.
+            </p>
+            <p class="clause-indent">
+                En casos excepcionales, la cancelacion de unidades se llevara a cabo con previa autorizacion de MAQZONE y la devolucion de recurso se hara hasta que la misma sea vendida y recolectada por un nuevo comprador.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">19.</span>
+                <span class="emphasis">Todos los bienes ofrecidos en subasta por MAQZONE se venden en el estado fisico y legal en que se encuentran</span>, en el lugar donde se localizan, y con todos sus posibles defectos, visibles o no, sin garantia expresa o implicita de funcionamiento, calidad, estado, procedencia o idoneidad para un uso particular. En consecuencia, es responsabilidad exclusiva de los postores llevar a cabo la inspeccion fisica y, en su caso, documental de los bienes durante el periodo senalado en la convocatoria correspondiente.
+            </p>
+            <p class="clause-indent">
+                Las imagenes, descripciones o fichas tecnicas publicadas en el sitio web de MAQZONE son meramente ilustrativas y tienen como unica finalidad proporcionar una referencia visual preliminar, por lo que no sustituyen la inspeccion directa ni constituyen garantia alguna sobre las condiciones, caracteristicas, autenticidad o funcionalidad de los bienes.
+            </p>
+            <p class="clause-indent">
+                MAQZONE no sera responsable, bajo ninguna circunstancia, por vicios ocultos, aparentes, ni por cualquier otro defecto o inconformidad que pudieren presentarse con posterioridad a la adjudicacion. Con su participacion en la subasta, el postor reconoce y acepta expresamente que adquiere los bienes bajo su propio riesgo y que renuncia a ejercer cualquier accion en contra de MAQZONE derivada del estado, funcionamiento o condiciones de los bienes adjudicados.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">20.</span>
+                Ni <span class="emphasis">MAQZONE</span>, ni el vendedor, otorgan garantia alguna, expresa o implicita, respecto de la calidad, valor, condicion, funcionamiento, autenticidad, origen o cualquier otra caracteristica de los bienes ofrecidos en subasta. MAQZONE y el vendedor rechazan expresamente cualquier garantia de comerciabilidad o de adecuacion para un proposito especifico.
+            </p>
+            <p class="clause-indent">
+                En caso de que algun bien cuente con una garantia vigente otorgada por el fabricante, dicha condicion sera expresamente informada en la descripcion del lote correspondiente. Si no se menciona dicha garantia de manera clara y escrita, se entendera que el bien se oferta y transmite sin garantia de ningun tipo.
+            </p>
+        </div>
+
+        <!-- IMPUESTOS Y PRIMA AL COMPRADOR -->
+        <h2 class="section-heading">Impuestos y Prima al Comprador</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">21.</span>
+                Para todos los participantes, MAQZONE cobrara de cada postor que se adjudique un bien una <span class="emphasis">prima al comprador</span>:
+            </p>
+
+            <table class="premium-table">
+                <thead>
+                    <tr>
+                        <th>Categoria</th>
+                        <th>Prima sobre precio de martillo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Autos y montacargas (vehiculos/forklifts)</td>
+                        <td><span class="emphasis">10%</span> (Diez por ciento)</td>
+                    </tr>
+                    <tr>
+                        <td>Maquinaria, materiales y desecho ferroso</td>
+                        <td><span class="emphasis">14%</span> (Catorce por ciento)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p class="clause-indent" style="margin-top: 10px;">
+                Los precios de venta de estos bienes ya incluyen el <span class="emphasis">16% del Impuesto al Valor Agregado (IVA).</span>
+            </p>
+        </div>
+
+        <!-- FECHA LIMITE Y FORMAS DE PAGO -->
+        <h2 class="section-heading">Fecha Limite y Formas de Pago</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">22.</span>
+                El pago completo del precio de adjudicacion (compra) de las unidades se debe realizar en un periodo de <span class="emphasis">5 (cinco) dias habiles</span> posterior a la fecha de subasta.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">23.</span>
+                Sin limitar lo anterior, el pago completo del saldo se debe liquidar antes de la remocion de cualquier bien adjudicado.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">24.</span>
+                En el caso de que el postor no realice el pago en su totalidad (adicional a la prima de comprador o cualquier impuesto aplicable) dentro del tiempo especificado por MAQZONE o de otro modo no se cumpla con los terminos o condiciones, <span class="emphasis">MAQZONE retendra el importe de la garantia o garantias de participacion depositadas, las cuales se tomaran como penalizacion por incumplimiento, sin necesidad de aviso previo alguno.</span>
+            </p>
+            <p class="clause-indent">
+                MAQZONE y el vendedor se reservan el derecho de revender tales lotes y el adquirente por defecto sera responsable de cualquier deficiencia resultante que afecte a MAQZONE y al vendedor, incluyendo los costos incurridos por el almacenamiento o reventa de tales lotes.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">25.</span>
+                MAQZONE acepta como formas de pago <span class="emphasis">unicamente transferencias electronicas y pago directo en ventanilla del banco.</span> Todo tipo de pago se realizara a nombre de MAQZONE en la siguiente cuenta:
+            </p>
+
+            <div class="bank-box">
+                <p><span class="bank-label">Banco:</span> [Por confirmar]</p>
+                <p><span class="bank-label">Beneficiario:</span> MAQZONE</p>
+                <p><span class="bank-label">Cuenta:</span> [Por confirmar]</p>
+                <p><span class="bank-label">CLABE:</span> [Por confirmar]</p>
+                <p><span class="bank-label">RFC:</span> [Por confirmar]</p>
+            </div>
+        </div>
+
+        <!-- DECLARACIONES Y OBLIGACIONES DEL COMPRADOR -->
+        <h2 class="section-heading">Declaraciones y Obligaciones del Comprador</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">26.</span>
+                Al participar en la subasta, cada postor representa, garantiza y conviene que:
+            </p>
+
+            <ul class="doc-list">
+                <li>Los postores tienen la obligacion de <span class="emphasis">examinar o inspeccionar los bienes</span> por los que vayan a pujar, debiendo solicitar previamente una cita en los terminos senalados en este documento.</li>
+                <li>Aceptacion de las condiciones fisicas y mecanicas en las que se encuentran los bienes a subastar.</li>
+                <li>No falseara su habilidad de cerrar la transaccion consiguiente en los terminos y condiciones de la venta.</li>
+                <li>Que tiene la capacidad legal de cerrar la transaccion.</li>
+                <li>Que tiene la autoridad de realizar posturas y de estar en conformidad a la adquisicion del o de los lotes.</li>
+                <li>Cualquier postura realizada sobre un lote constituye una <span class="emphasis">oferta irrevocable</span> para comprar el lote por el monto completo de la postura.</li>
+                <li>MAQZONE tiene el derecho de remover lotes de la subasta antes o despues de que se haya llevado a cabo el proceso de postura. El comprador tendra el recurso de devolucion del monto pagado.</li>
+                <li>MAQZONE anunciara el dia de la subasta cualquier adicion o eliminacion de lotes del catalogo. MAQZONE y el vendedor no asumen ninguna responsabilidad ni hacen representacion o garantia alguna acerca de las descripciones de los contenidos dentro de la publicidad de la subasta. Es obligacion del postor verificar tales descripciones mediante una inspeccion ocular con sus propios recursos.</li>
+                <li>Ni MAQZONE o el vendedor seran responsables de los danos de cualquier indole o naturaleza (ya sea en contrato, en agravio o de otra forma), sustentado o reclamado por cualquier postor o cualquier persona fisica o moral en relacion con la subasta. Sin limitar lo anterior, en ningun caso la responsabilidad de MAQZONE para cualquier postor o la omision que ocurra en relacion con la subasta, excedera la cantidad que tal postor haya pagado realmente a MAQZONE por los bienes adquiridos durante el evento.</li>
+                <li><span class="emphasis">El Cliente declara bajo protesta de decir verdad que todos los recursos economicos, fondos, pagos y valores que realice con motivo de la participacion en la subasta provienen de fuentes licitas</span> y no estan vinculados en modo alguno a conductas, actividades o delitos previstos en la Ley Federal para la Prevencion e Identificacion de Operaciones con Recursos de Procedencia Ilicita ("LFPIORPI").</li>
+            </ul>
+        </div>
+
+        <!-- FACTURACION -->
+        <h2 class="section-heading">Facturacion</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">27.</span>
+                La facturacion de los bienes se llevara a cabo por MAQZONE, asi como aquellos que se especifican en el apartado de documentos de cada lote. Las facturas seran entregadas a mas tardar <span class="emphasis">20 (veinte) dias habiles</span> posteriores al pago de la totalidad del monto adjudicado. Es importante hacer notar que una vez facturados los bienes no se realizara refacturacion ni modificaciones de ninguna indole.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">28.</span>
+                Las facturas de los lotes seran enviadas al correo electronico proporcionado en su registro.
+            </p>
+        </div>
+
+        <!-- REMOCION DE LOS BIENES -->
+        <h2 class="section-heading">Remocion de los Bienes</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">29.</span>
+                La remocion de los lotes sera de <span class="emphasis">10:00 a 16:00 hrs.</span>, de acuerdo con el calendario de entregas que se establecera posterior a la subasta y que se hara llegar mediante el correo electronico proporcionado por el postor, teniendo como condicion el pago total de los lotes.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">30.</span>
+                La fecha limite para la remocion de los bienes adjudicados sera la establecida en el calendario de entregas correspondiente a cada subasta. En caso de que el comprador incurra en retraso imputable en el retiro de los lotes, se generara una <span class="emphasis">penalizacion automatica por concepto de almacenaje y administracion, equivalente a $500.00 (quinientos pesos 00/100 M.N.) por lote y por cada dia natural de retraso</span>, contados a partir del dia siguiente a la fecha limite establecida.
+            </p>
+            <p class="clause-indent">
+                Asimismo, si el comprador no se presenta en la fecha y hora senaladas en el calendario de entregas, cualquier dano, deterioro, perdida, extravio o afectacion que sufra el lote con posterioridad a dicha fecha sera de su exclusiva responsabilidad, sin que proceda reclamacion alguna en contra de MAQZONE, aun tratandose de caso fortuito o fuerza mayor.
+            </p>
+            <p class="clause-indent">
+                En caso de que por causas ajenas a MAQZONE, resulte imposible efectuar la entrega del bien en la fecha y hora establecidas en el calendario de entregas, el comprador se obliga a acudir en una segunda ocasion, conforme a la nueva fecha y hora que MAQZONE le senale para tal efecto, sin que dicha circunstancia genere responsabilidad, penalizacion o indemnizacion alguna para MAQZONE.
+            </p>
+            <p class="clause-indent">
+                <span class="emphasis">En caso de que hayan transcurrido 15 (quince) dias naturales</span> posteriores a la fecha limite de entrega sin que el comprador haya retirado los bienes adjudicados, y sin causa justificada debidamente notificada y aceptada por escrito por parte de MAQZONE, se tendra por abandonado el lote. En tal supuesto, <span class="emphasis">MAQZONE podra disponer libremente del bien adjudicado, aplicando como penalizacion la garantia de participacion entregada por el comprador antes de la subasta</span>, procediendose con el reembolso al comprador unicamente del excedente pagado, es decir, la diferencia entre el importe total pagado y la garantia retenida como penalizacion.
+            </p>
+            <p class="clause-indent">
+                Lo anterior se realizara una vez que el comprador proporcione mediante correo electronico sus datos bancarios, sin que ello genere derecho a reembolso adicional, indemnizacion, reclamacion o responsabilidad alguna para MAQZONE.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">31.</span>
+                La remocion sera realizada de manera responsable, respetando en todo momento los lineamientos que la empresa vendedora requiera para el retiro de los bienes. Ningun comprador podra retirar ningun bien si no esta acompanado por un representante de MAQZONE y/o del vendedor, dentro de las instalaciones donde se localizan los bienes.
+            </p>
+        </div>
+
+        <!-- DECLARACIONES FINALES -->
+        <h2 class="section-heading">Declaraciones Finales</h2>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">32.</span>
+                Cada postor participa en la subasta bajo su propia responsabilidad con la advertencia de las condiciones de venta aqui expresadas. Ninguna persona sostendra ningun reclamo en contra de <span class="emphasis">MAQZONE</span>, el vendedor o sus respectivos agentes o empleados por cualquier dano, lesion sustentada o perdida de propiedad que ocurra en el sitio donde se encuentran fisicamente los lotes.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">33.</span>
+                Es exclusiva responsabilidad del postor reunir todas las normas gubernamentales de seguridad y ambientales para remover, transportar y utilizar los bienes adjudicados.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">34.</span>
+                Si existiera el caso de que ciertos bienes en venta pudieran contener "sustancias peligrosas" como es definido bajo las leyes y regulaciones correspondientes, MAQZONE y el vendedor no tienen ninguna obligacion de remover ninguna sustancia peligrosa que estuviera contenida en o fuera parte de cualquier bien.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">35.</span>
+                Ninguna de las condiciones establecidas en estos terminos y condiciones podran ser negociadas. La participacion en la subasta implica la <span class="emphasis">aceptacion expresa, consciente e irrevocable</span> de los presentes terminos y condiciones, incluyendo las obligaciones, declaraciones y advertencias dirigidas al comprador, sin que pueda alegarse error, dolo, mala fe, violencia, lesion o vicio alguno en el consentimiento.
+            </p>
+            <p class="clause-indent">
+                Para cualquier duda o comentario respecto a la presente subasta favor de comunicarse al telefono: <span class="emphasis">+52 444 216 4550</span> o al correo <a href="mailto:contacto@maqzone.mx">contacto@maqzone.mx</a>.
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">36.</span>
+                Con fundamento a lo establecido en los articulos 1803 y 1811 del Codigo Civil Federal; al completar su registro como postor, usted manifiesta expresamente que ha leido, comprendido y aceptado en su totalidad los presentes terminos y condiciones, obligandose a su estricto cumplimiento. Esta aceptacion tiene caracter vinculante y constituye un acuerdo legal entre el postor y MAQZONE.
+            </p>
+            <p class="clause-indent">
+                <span class="emphasis">En caso de no estar de acuerdo con cualquiera de las disposiciones aqui contenidas, se recomienda abstenerse de utilizar los servicios de MAQZONE o de participar en cualquiera de sus subastas, ya que el simple hecho de continuar con el proceso de registro y participar activamente en la subasta implica plena conformidad con este documento y aceptacion voluntaria de sus efectos juridicos.</span>
+            </p>
+        </div>
+
+        <div class="clause">
+            <p>
+                <span class="clause-number">37.</span>
+                <span class="emphasis">Jurisdiccion y legislacion aplicable.</span> Con fundamento a lo establecido en el articulo 1093 del Codigo de Comercio; para la interpretacion, cumplimiento y ejecucion de los presentes terminos y condiciones, las partes se someten expresamente a las leyes aplicables en los Estados Unidos Mexicanos, y a la jurisdiccion y competencia exclusiva de los <span class="emphasis">tribunales competentes en el Estado de San Luis Potosi</span>, renunciando en este acto a cualquier otro fuero que, por razon de su domicilio presente o futuro, o por cualquier otra causa, pudiera corresponderles.
+            </p>
+        </div>
+
+        <!-- Signature -->
+        <div class="signature-section">
+            <span class="signature-line"></span>
+            <span class="signature-label">Nombre y Firma del Postor</span>
+        </div>
+
+        <!-- DECLARACION DE ORIGEN LICITO DE RECURSOS -->
+        <div class="declaration-form">
+            <div class="form-title">Declaracion de Origen Licito de Recursos</div>
+
+            <p style="margin-bottom: 16px;">En San Luis Potosi, S.L.P. a ______ de ________________ de 20______</p>
+
+            <div class="form-field">
+                <span class="form-field-label">Datos del Declarante</span>
+            </div>
+            <div class="form-field">
+                <span class="form-field-label">Nombre o Razon Social del cliente:</span>
+                <span class="form-field-line"></span>
+            </div>
+
+            <div class="form-field" style="margin-top: 20px;">
+                <span class="form-field-label">Operacion</span><br>
+                <p>Tipo de operacion: <span class="emphasis">ADQUISICION DE BIENES MEDIANTE SUBASTA.</span></p>
+            </div>
+
+            <div class="form-field" style="margin-top: 20px;">
+                <span class="form-field-label">Declaracion</span><br>
+                <p>Declaro bajo protesta de decir verdad que:</p>
+            </div>
+
+            <ol class="doc-list-alpha">
+                <li>Los recursos que utilizare para esta operacion provienen de actividades licitas, propias o de la entidad que represento, y no tienen origen en conductas ilicitas.</li>
+                <li>No estoy sujeto a investigacion penal o administrativa por delitos relacionados con lavado de dinero, corrupcion, financiamiento al terrorismo o similares.</li>
+                <li>No aparezco en listas nacionales o internacionales de personas bloqueadas por operaciones relacionadas con lavado de dinero o financiamiento al terrorismo.</li>
+                <li>Me comprometo a aportar, en su caso, la documentacion que me solicite <span class="emphasis">MAQZONE</span> para acreditar el origen de los recursos, conforme a la politica interna de prevencion de operaciones con recursos de procedencia ilicita (PLD) de la empresa.</li>
+                <li>Comprendo que en caso de que los recursos resulten ser de procedencia ilicita, <span class="emphasis">MAQZONE</span> podra detener la operacion, reportar a la UIF o adoptar las otras medidas que correspondan de acuerdo con la normativa aplicable.</li>
+            </ol>
+
+            <p style="margin-top: 20px;"><span class="emphasis">FIRMA</span></p>
+            <div class="form-signature-line"></div>
+            <span class="signature-label">Nombre y firma del cliente o representante</span>
+            <p style="margin-top: 12px; font-size: 10pt;">Fecha: ______ / ______ / 20______</p>
+        </div>
+
+        <!-- Contact section -->
+        <div class="contact-section">
+            <div class="contact-title">Contacto MAQZONE</div>
+            <p>Telefono / WhatsApp: <span class="emphasis">+52 444 216 4550</span></p>
+            <p>Correo electronico: <a href="mailto:contacto@maqzone.mx">contacto@maqzone.mx</a></p>
+            <p style="margin-top: 8px; font-size: 9pt; color: #999;">San Luis Potosi, S.L.P., Mexico</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="doc-footer">
+            <p>MAQZONE &mdash; Terminos y Condiciones de la Subasta</p>
+            <p>Este documento es propiedad de MAQZONE. Todos los derechos reservados.</p>
+        </div>
+
+    </div>
+</body>
+</html>
