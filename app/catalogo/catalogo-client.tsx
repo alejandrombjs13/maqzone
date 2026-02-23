@@ -23,18 +23,26 @@ function normalizeSaleFilter(value: string | null): SaleFilter {
   return "todos";
 }
 
-export default function CatalogoClient({ listings }: { listings: Listing[] }) {
+export default function CatalogoClient({
+  listings,
+  initialSearch: initSearch = "",
+  initialCategory: initCategory = "",
+  initialSort: initSort = "",
+  initialSale: initSale = "",
+}: {
+  listings: Listing[];
+  initialSearch?: string;
+  initialCategory?: string;
+  initialSort?: string;
+  initialSale?: string;
+}) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const initialSearch = searchParams.get("q") || "";
-  const initialCat = searchParams.get("categoria") || "";
-  const initialSort = normalizeSort(searchParams.get("sort"));
-  const initialSale = normalizeSaleFilter(searchParams.get("venta"));
-  const [search, setSearch] = useState(initialSearch);
-  const [activeCategory, setActiveCategory] = useState(initialCat);
-  const [sort, setSort] = useState<SortOption>(initialSort);
-  const [saleFilter, setSaleFilter] = useState<SaleFilter>(initialSale);
+  const [search, setSearch] = useState(initSearch);
+  const [activeCategory, setActiveCategory] = useState(initCategory);
+  const [sort, setSort] = useState<SortOption>(normalizeSort(initSort));
+  const [saleFilter, setSaleFilter] = useState<SaleFilter>(normalizeSaleFilter(initSale));
 
   const updateParams = useCallback((next: {
     q?: string;
@@ -64,18 +72,6 @@ export default function CatalogoClient({ listings }: { listings: Listing[] }) {
     const query = params.toString();
     router.replace(query ? `/catalogo?${query}` : "/catalogo", { scroll: false });
   }, [router, searchParams]);
-
-  useEffect(() => {
-    const q = searchParams.get("q") || "";
-    const cat = searchParams.get("categoria") || "";
-    const sortParam = normalizeSort(searchParams.get("sort"));
-    const saleParam = normalizeSaleFilter(searchParams.get("venta"));
-
-    setSearch(q);
-    setActiveCategory(cat);
-    setSort(sortParam);
-    setSaleFilter(saleParam);
-  }, [searchParams]);
 
   useEffect(() => {
     const id = setTimeout(() => {

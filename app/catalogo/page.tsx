@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { fetchListings } from "../lib/api";
 import CatalogoClient from "./catalogo-client";
 
@@ -7,12 +6,20 @@ export const metadata = {
   description: "Explora nuestro catalogo completo de maquinaria pesada, vehiculos y equipos industriales certificados.",
 };
 
-export default async function CatalogoPage() {
+export default async function CatalogoPage({
+  searchParams,
+}: {
+  searchParams: { q?: string; categoria?: string; sort?: string; venta?: string };
+}) {
   const listings = await fetchListings(50);
 
   return (
-    <Suspense>
-      <CatalogoClient listings={listings} />
-    </Suspense>
+    <CatalogoClient
+      listings={listings}
+      initialSearch={searchParams.q || ""}
+      initialCategory={searchParams.categoria || ""}
+      initialSort={searchParams.sort || ""}
+      initialSale={searchParams.venta || ""}
+    />
   );
 }
