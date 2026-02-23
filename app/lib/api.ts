@@ -43,7 +43,7 @@ export type Auction = {
 export async function fetchListings(limit = 50): Promise<Listing[]> {
   try {
     const res = await fetch(`${API_BASE}/api/listings?limit=${limit}`, {
-      next: { revalidate: 30 },
+      next: { revalidate: 300 },
     });
     if (!res.ok) return [];
     return (await res.json()) as Listing[];
@@ -55,7 +55,7 @@ export async function fetchListings(limit = 50): Promise<Listing[]> {
 export async function fetchListing(id: string): Promise<Listing | null> {
   try {
     const res = await fetch(`${API_BASE}/api/listings/${id}`, {
-      next: { revalidate: 15 },
+      next: { revalidate: 300 },
     });
     if (!res.ok) return null;
     return (await res.json()) as Listing;

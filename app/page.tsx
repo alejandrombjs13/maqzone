@@ -55,6 +55,9 @@ export default async function Home() {
 
   return (
     <>
+      {/* Preload LCP — la imagen del carousel arranca antes de que hidrate React */}
+      <link rel="preload" as="image" href={heroSlides[0].src} fetchPriority="high" />
+
       {/* ── Hero Carousel ───────────────────────────────── */}
       <section className="section pt-6 sm:pt-8">
         <HeroCarousel slides={heroSlides} />

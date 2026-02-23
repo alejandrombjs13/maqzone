@@ -12,13 +12,14 @@ services:
       - caddy-data:/data
       - caddy-config:/config
       - caddy-logs:/var/log/caddy
+      - ./public/products:/srv/products:ro
     depends_on:
       backend:
         condition: service_healthy
       web:
         condition: service_started
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/api/health"]
+      test: ["CMD", "sh", "-c", "pidof caddy"]
       interval: 30s
       timeout: 5s
       retries: 3

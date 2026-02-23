@@ -61,6 +61,8 @@ export default function HeroCarousel({ slides }: { slides: Slide[] }) {
               src={slide.src}
               alt={slide.alt || ""}
               className="h-full w-full object-cover"
+              fetchPriority={i === 0 ? "high" : "low"}
+              loading={i === 0 ? "eager" : "lazy"}
             />
           )}
         </div>
@@ -72,7 +74,7 @@ export default function HeroCarousel({ slides }: { slides: Slide[] }) {
       {/* Slogan */}
       <div className="absolute inset-0 z-30 flex items-center justify-center px-6">
         <h2 className="slogan-text text-center font-display text-4xl uppercase tracking-[0.1em] text-sand sm:text-6xl lg:text-8xl">
-          Subastas de maquinaria
+          Venta de maquinaria
           <br />
           <span className="text-cyan">sin fronteras</span>
         </h2>

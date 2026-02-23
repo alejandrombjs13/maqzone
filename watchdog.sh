@@ -7,18 +7,27 @@ COMPOSE_FILE="${COMPOSE_FILE:-docker-compose.prod.yml}"
 COMPOSE_DIR="$(cd "$(dirname "$0")" && pwd)"
 LOG="${COMPOSE_DIR}/watchdog.log"
 MAX_LOG_LINES=2000
+DISK_ALERT_PCT=85   # % de disco libre a partir del cual limpia Docker
+BACKUPS_DIR="${COMPOSE_DIR}/backups"
 
 log() {
   local line
   line="$(date '+%Y-%m-%d %H:%M:%S') $1"
   echo "$line"
   echo "$line" >> "$LOG"
-  # Rotar log cuando pasa de MAX_LOG_LINES
   local lines
   lines=$(wc -l < "$LOG" 2>/dev/null || echo 0)
   if [ "$lines" -gt "$MAX_LOG_LINES" ]; then
     tail -n $((MAX_LOG_LINES / 2)) "$LOG" > "${LOG}.tmp" && mv "${LOG}.tmp" "$LOG"
   fi
+}
+
+container_health() {
+  docker inspect "$1" --format '{{.State.Health.Status}}' 2>/dev/null || echo "none"
+}
+
+container_status() {
+  docker inspect "$1" --format '{{.State.Status}}' 2>/dev/null || echo "none"
 }
 
 restart_stack() {
@@ -27,35 +36,41 @@ restart_stack() {
   docker compose -f "$COMPOSE_FILE" down --timeout 10
   sleep 3
   docker compose -f "$COMPOSE_FILE" up -d
-  sleep 15
+  sleep 20
   log "INFO: Reinicio completo."
 }
 
 log "INFO: Watchdog iniciado (compose: $COMPOSE_FILE)"
+mkdir -p "$BACKUPS_DIR"
 
 while true; do
   cd "$COMPOSE_DIR"
 
-  # ── 1. Verificar que los contenedores estén corriendo ──────────
-  EXPECTED=3  # caddy + backend + web
-  RUNNING=$(docker compose -f "$COMPOSE_FILE" ps --status running 2>/dev/null | grep -c "running" || echo 0)
-
-  if [ "$RUNNING" -lt "$EXPECTED" ]; then
-    log "WARN: Solo $RUNNING/$EXPECTED contenedores activos. Reiniciando..."
-    restart_stack
-    continue
+  # ── 0. Disco lleno — limpiar antes de que cause problemas ──────
+  DISK_PCT=$(df / --output=pcent 2>/dev/null | tail -1 | tr -d ' %')
+  if [ "${DISK_PCT:-0}" -ge "$DISK_ALERT_PCT" ]; then
+    log "WARN: Disco al ${DISK_PCT}%. Limpiando imágenes Docker huérfanas..."
+    docker system prune -f --filter "until=24h" >> "$LOG" 2>&1
   fi
 
-  # ── 2. Health check del backend ────────────────────────────────
-  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 http://localhost/api/health 2>/dev/null)
-  if [ "$HTTP_CODE" != "200" ]; then
-    log "WARN: Backend health check falló (HTTP $HTTP_CODE). Reiniciando backend..."
+  # ── 1. Verificar que los 3 contenedores estén corriendo ────────
+  for svc in maqzone-backend-1 maqzone-web-1 maqzone-caddy-1; do
+    STATUS=$(container_status "$svc")
+    if [ "$STATUS" != "running" ]; then
+      log "WARN: Contenedor $svc no está corriendo (estado: $STATUS). Reiniciando stack..."
+      restart_stack
+      continue 2
+    fi
+  done
+
+  # ── 2. Health check del backend (via Docker healthcheck) ───────
+  BACKEND_HEALTH=$(container_health "maqzone-backend-1")
+  if [ "$BACKEND_HEALTH" = "unhealthy" ]; then
+    log "WARN: Backend unhealthy. Reiniciando backend..."
     docker compose -f "$COMPOSE_FILE" restart backend
-    sleep 15
-    # Re-verificar
-    HTTP_CODE2=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 http://localhost/api/health 2>/dev/null)
-    if [ "$HTTP_CODE2" != "200" ]; then
-      log "ERROR: Backend no recuperó (HTTP $HTTP_CODE2). Reiniciando stack completo..."
+    sleep 20
+    if [ "$(container_health maqzone-backend-1)" = "unhealthy" ]; then
+      log "ERROR: Backend no recuperó. Reiniciando stack completo..."
       restart_stack
     else
       log "INFO: Backend recuperado OK."
@@ -63,18 +78,17 @@ while true; do
     continue
   fi
 
-  # ── 3. Health check del frontend ───────────────────────────────
-  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 http://localhost/ 2>/dev/null)
-  if [ "$HTTP_CODE" != "200" ]; then
-    log "WARN: Frontend health check falló (HTTP $HTTP_CODE). Reiniciando web..."
+  # ── 3. Health check del frontend (via Docker healthcheck) ──────
+  WEB_HEALTH=$(container_health "maqzone-web-1")
+  if [ "$WEB_HEALTH" = "unhealthy" ]; then
+    log "WARN: Web unhealthy. Reiniciando web..."
     docker compose -f "$COMPOSE_FILE" restart web
-    sleep 20
-    HTTP_CODE2=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 http://localhost/ 2>/dev/null)
-    if [ "$HTTP_CODE2" != "200" ]; then
-      log "ERROR: Frontend no recuperó. Reiniciando stack completo..."
+    sleep 25
+    if [ "$(container_health maqzone-web-1)" = "unhealthy" ]; then
+      log "ERROR: Web no recuperó. Reiniciando stack completo..."
       restart_stack
     else
-      log "INFO: Frontend recuperado OK."
+      log "INFO: Web recuperado OK."
     fi
     continue
   fi
