@@ -9,10 +9,10 @@ import { categories } from "./lib/categories";
 /* ── Static Data ─────────────────────────────────────── */
 
 const heroSlides: Slide[] = [
-  { type: "image", src: "/products/haas-sl30t/1.png", alt: "Torno HAAS SL-30T" },
-  { type: "image", src: "/products/goodwill-gc18s/1.png", alt: "Rectificadora Goodwill GC-18S" },
-  { type: "image", src: "/products/freightliner-cascadia-2019/1.png", alt: "Freightliner Cascadia 2019" },
-  { type: "image", src: "/products/freightliner-m2-2016/1.png", alt: "Freightliner M2 106 Caja Refrigerada" },
+  { type: "image", src: "/products/haas-sl30t/1.jpg", alt: "Torno HAAS SL-30T" },
+  { type: "image", src: "/products/goodwill-gc18s/1.jpg", alt: "Rectificadora Goodwill GC-18S" },
+  { type: "image", src: "/products/freightliner-cascadia-2019/1.jpg", alt: "Freightliner Cascadia 2019" },
+  { type: "image", src: "/products/freightliner-m2-2016/1.jpg", alt: "Freightliner M2 106 Caja Refrigerada" },
 ];
 
 const clientLogos: Logo[] = [

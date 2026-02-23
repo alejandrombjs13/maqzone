@@ -75,6 +75,8 @@ services:
       - NODE_ENV=production
       - API_BASE=http://backend:8080
       - NEXT_PUBLIC_API_BASE=https://${DOMAIN}
+    volumes:
+      - ./public/products:/app/public/products:ro
     depends_on:
       backend:
         condition: service_healthy
