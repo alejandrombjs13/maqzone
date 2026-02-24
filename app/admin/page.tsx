@@ -208,6 +208,13 @@ export default function AdminPage() {
   const [imagesLoading, setImagesLoading] = useState(false);
   const [imagesMessage, setImagesMessage] = useState<string | null>(null);
 
+  // Upload
+  const [uploadSlug, setUploadSlug] = useState("");
+  const [dragOver, setDragOver] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(false);
+  const [deleteImageTarget, setDeleteImageTarget] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const endpoint = useMemo(
     () => (mode === "auctions" ? "auctions" : "listings"),
     [mode]
@@ -337,6 +344,57 @@ export default function AdminPage() {
     await saveImageOrder(next);
   }
 
+  // ── Upload helpers ───────────────────────────────────────────
+  function titleToSlug(title: string) {
+    return title
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ñ/g, "n")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  async function handleUpload(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const slug = uploadSlug || selectedProduct;
+    if (!slug) { showToast("Define la carpeta (slug) antes de subir fotos.", "error"); return; }
+    setUploadProgress(true);
+    try {
+      const fd = new FormData();
+      fd.append("slug", slug);
+      for (let i = 0; i < files.length; i++) fd.append("files", files[i]);
+      const res = await fetch("/api/admin/images/upload", {
+        method: "POST",
+        headers: authHeaders(),
+        body: fd,
+      });
+      if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Error al subir"); }
+      const data = await res.json();
+      if (!selectedProduct && slug) setSelectedProduct(slug);
+      showToast(`${data.count} foto${data.count !== 1 ? "s" : ""} subida${data.count !== 1 ? "s" : ""}`);
+      await loadImageCatalog();
+    } catch (err: unknown) { showToast(err instanceof Error ? err.message : "Error al subir", "error"); }
+    finally { setUploadProgress(false); }
+  }
+
+  async function handleDeleteImage(imgName: string) {
+    const slug = selectedProduct;
+    if (!slug) return;
+    try {
+      const res = await fetch("/api/admin/images", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body: JSON.stringify({ slug, name: imgName }),
+      });
+      if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Error"); }
+      setDeleteImageTarget(null);
+      if (form.image_url?.includes(imgName)) updateForm("image_url", "");
+      showToast("Foto eliminada");
+      await loadImageCatalog();
+    } catch (err: unknown) { showToast(err instanceof Error ? err.message : "Error al eliminar", "error"); }
+  }
+
   // ── Effects ──────────────────────────────────────────────────
   useEffect(() => {
     if (user?.is_admin) void loadImageCatalog();
@@ -378,6 +436,12 @@ export default function AdminPage() {
     const slug = extractSlug(form.image_url);
     if (slug) setSelectedProduct(slug);
   }, [form.image_url]);
+
+  useEffect(() => {
+    if (form.title && !uploadSlug) {
+      setUploadSlug(titleToSlug(form.title));
+    }
+  }, [form.title]);
 
   // ── Data fetching ─────────────────────────────────────────────
   async function fetchItems() {
@@ -1052,55 +1116,131 @@ export default function AdminPage() {
               )}
 
               {/* Image library */}
-              <div className="space-y-3">
-                <FieldInput label="Imagen principal" id="admin-img">
-                  <input id="admin-img" className={inputCls} value={form.image_url || ""} onChange={(e) => updateForm("image_url", e.target.value)} placeholder="/products/nombre-producto/1.png" />
+              <div className="rounded-2xl border border-sand/10 bg-graphite/50 p-4 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-xs uppercase tracking-[0.3em] text-sand/60">Fotos del producto</p>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={loadImageCatalog} className="rounded-full border border-sand/20 px-3 py-1 text-[10px] text-sand/60 transition hover:text-sand">
+                      Recargar
+                    </button>
+                    <button type="button" onClick={() => saveImageOrder(imageOrder)} disabled={!imageOrder.length || imagesLoading} className="rounded-full border border-cyan/30 px-3 py-1 text-[10px] text-cyan transition hover:bg-cyan/10 disabled:opacity-50">
+                      Guardar orden
+                    </button>
+                  </div>
+                </div>
+
+                {/* Slug input */}
+                <div className="flex items-center gap-2">
+                  <label className="shrink-0 text-[10px] uppercase tracking-[0.2em] text-sand/50">Carpeta:</label>
+                  <input
+                    className="min-w-0 flex-1 rounded-xl border border-sand/20 bg-graphite/70 px-3 py-1.5 text-xs text-sand outline-none focus:border-cyan/50 transition"
+                    value={uploadSlug}
+                    onChange={(e) => setUploadSlug(e.target.value.replace(/[^a-z0-9-_]/g, ""))}
+                    placeholder="ej: haas-sl30-nuevo"
+                  />
+                  {imageCatalog.length > 0 && (
+                    <select
+                      value={selectedProduct}
+                      onChange={(e) => { setSelectedProduct(e.target.value); setUploadSlug(e.target.value); }}
+                      className="rounded-xl border border-sand/15 bg-graphite/70 px-2 py-1.5 text-[10px] text-sand"
+                    >
+                      <option value="">Existentes</option>
+                      {imageCatalog.map((p) => <option key={p.slug} value={p.slug}>{p.slug}</option>)}
+                    </select>
+                  )}
+                </div>
+
+                {/* Dropzone */}
+                <div
+                  className={`relative flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 text-center transition cursor-pointer ${
+                    dragOver ? "border-cyan bg-cyan/5" : "border-sand/20 hover:border-sand/40"
+                  }`}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => { e.preventDefault(); setDragOver(false); void handleUpload(e.dataTransfer.files); }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <svg className="h-8 w-8 text-sand/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                  </svg>
+                  <p className="text-xs text-sand/50">Arrastra fotos aquí o haz clic para seleccionar</p>
+                  <p className="text-[10px] text-sand/30">JPG · PNG · WEBP — máx 10 MB por foto</p>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    multiple
+                    className="sr-only"
+                    onChange={(e) => void handleUpload(e.target.files)}
+                  />
+                </div>
+
+                {uploadProgress && (
+                  <div className="flex items-center gap-2 text-xs text-cyan">
+                    <Spinner />Subiendo fotos...
+                  </div>
+                )}
+
+                {imagesMessage && <div className="rounded-xl bg-graphite/60 px-3 py-2 text-xs text-sand/70">{imagesMessage}</div>}
+                {imagesLoading && !uploadProgress && <div className="flex items-center gap-2 text-xs text-sand/60"><Spinner />Procesando...</div>}
+
+                {/* Gallery */}
+                {selectedProduct && imageOrder.length > 0 && (
+                  <div>
+                    <p className="mb-2 text-[10px] text-sand/40">Galería ({imageOrder.length} foto{imageOrder.length !== 1 ? "s" : ""})</p>
+                    <div className="grid gap-3 grid-cols-2 sm:grid-cols-4">
+                      {imageOrder.map((img, index) => (
+                        <div key={img.name} className="relative rounded-xl border border-sand/10 bg-graphite/70 p-1.5">
+                          <button type="button" onClick={() => updateForm("image_url", img.url)} className="relative block w-full overflow-hidden rounded-lg">
+                            <Image src={img.url} alt={img.name} width={200} height={150} className={`h-20 w-full object-cover ${index === 0 ? "ring-2 ring-cyan" : ""}`} />
+                            {index === 0 && (
+                              <span className="absolute left-1 top-1 rounded-full bg-cyan/80 px-1.5 py-0.5 text-[9px] font-semibold text-white">Principal</span>
+                            )}
+                            {index > 0 && (
+                              <span className="absolute left-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] text-white">#{index + 1}</span>
+                            )}
+                          </button>
+                          {/* Delete button */}
+                          <button
+                            type="button"
+                            className="absolute right-2 top-2 rounded-full bg-black/60 p-0.5 text-ember transition hover:bg-ember/20"
+                            onClick={() => setDeleteImageTarget(deleteImageTarget === img.name ? null : img.name)}
+                          >
+                            <svg className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                          {/* Inline delete confirm */}
+                          {deleteImageTarget === img.name && (
+                            <div className="mt-1 flex items-center gap-1">
+                              <span className="text-[9px] text-ember flex-1">¿Eliminar?</span>
+                              <button type="button" className="rounded bg-ember/20 px-1.5 py-0.5 text-[9px] font-semibold text-ember hover:bg-ember/30" onClick={() => void handleDeleteImage(img.name)}>Sí</button>
+                              <button type="button" className="rounded bg-graphite/60 px-1.5 py-0.5 text-[9px] text-sand/50 hover:text-sand" onClick={() => setDeleteImageTarget(null)}>No</button>
+                            </div>
+                          )}
+                          {/* Reorder + Primary buttons */}
+                          <div className="mt-1 flex flex-wrap items-center gap-1">
+                            <button type="button" className="rounded border border-sand/20 px-1.5 py-0.5 text-[9px] text-sand/60 transition hover:text-sand disabled:opacity-30" disabled={index === 0} onClick={() => moveImage(index, -1)}>▲</button>
+                            <button type="button" className="rounded border border-sand/20 px-1.5 py-0.5 text-[9px] text-sand/60 transition hover:text-sand disabled:opacity-30" disabled={index === imageOrder.length - 1} onClick={() => moveImage(index, 1)}>▼</button>
+                            {index > 0 && (
+                              <button type="button" className="rounded border border-cyan/30 px-1.5 py-0.5 text-[9px] text-cyan transition hover:bg-cyan/10" onClick={() => makePrimary(index)}>★</button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Main image URL field */}
+                <FieldInput label="URL imagen principal" id="admin-img">
+                  <input id="admin-img" className={inputCls} value={form.image_url || ""} onChange={(e) => updateForm("image_url", e.target.value)} placeholder="/products/nombre-producto/1.jpg" />
                   {form.image_url && (
                     <div className="mt-2 overflow-hidden rounded-xl border border-sand/10 bg-steel">
                       <Image src={form.image_url} alt="Preview" width={400} height={240} className="h-32 w-full object-cover" />
                     </div>
                   )}
                 </FieldInput>
-
-                <div className="rounded-2xl border border-sand/10 bg-graphite/50 p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-sand/60">Biblioteca de imagenes</p>
-                      <p className="text-xs text-sand/50">Selecciona carpeta, ordena y define la principal.</p>
-                    </div>
-                    <button type="button" onClick={loadImageCatalog} className="rounded-full border border-sand/20 px-3 py-1.5 text-xs text-sand/60 transition hover:text-sand">
-                      Recargar
-                    </button>
-                  </div>
-                  {imagesMessage && <div className="mt-3 rounded-xl bg-graphite/60 px-3 py-2 text-xs text-sand/70">{imagesMessage}</div>}
-                  <div className="mt-4 flex flex-wrap items-center gap-3">
-                    <select value={selectedProduct} onChange={(e) => setSelectedProduct(e.target.value)} className="rounded-xl border border-sand/15 bg-graphite/70 px-3 py-2 text-xs text-sand">
-                      <option value="">Selecciona carpeta</option>
-                      {imageCatalog.map((p) => <option key={p.slug} value={p.slug}>{p.slug}</option>)}
-                    </select>
-                    <button type="button" onClick={() => saveImageOrder(imageOrder)} disabled={!imageOrder.length || imagesLoading} className="rounded-full border border-cyan/30 px-3 py-1.5 text-xs text-cyan transition hover:bg-cyan/10 disabled:opacity-50">
-                      Guardar orden
-                    </button>
-                  </div>
-                  {imagesLoading && <div className="mt-3 flex items-center gap-2 text-xs text-sand/60"><Spinner />Procesando...</div>}
-                  {selectedProduct && imageOrder.length > 0 && (
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                      {imageOrder.map((img, index) => (
-                        <div key={img.name} className="rounded-xl border border-sand/10 bg-graphite/70 p-2">
-                          <button type="button" onClick={() => updateForm("image_url", img.url)} className="relative block w-full overflow-hidden rounded-lg">
-                            <Image src={img.url} alt={img.name} width={400} height={240} className={`h-28 w-full object-cover ${index === 0 ? "ring-2 ring-cyan" : ""}`} />
-                            <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] text-white">#{index + 1}</span>
-                          </button>
-                          <div className="mt-2 flex flex-wrap items-center gap-2">
-                            <button type="button" className="rounded-full border border-sand/20 px-2 py-1 text-[10px] text-sand/60 transition hover:text-sand" disabled={index === 0} onClick={() => moveImage(index, -1)}>Subir</button>
-                            <button type="button" className="rounded-full border border-sand/20 px-2 py-1 text-[10px] text-sand/60 transition hover:text-sand" disabled={index === imageOrder.length - 1} onClick={() => moveImage(index, 1)}>Bajar</button>
-                            <button type="button" className="rounded-full border border-cyan/30 px-2 py-1 text-[10px] text-cyan transition hover:bg-cyan/10" onClick={() => makePrimary(index)}>Principal</button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
               </div>
 
               <FieldInput label="Estado" id="admin-status">

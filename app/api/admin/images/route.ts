@@ -116,3 +116,46 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ ok: true });
 }
+
+export async function DELETE(req: Request) {
+  const ok = await requireAdmin(req);
+  if (!ok) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const body = await req.json();
+  const slug = normalizeSlug(body.slug || "");
+  const name = path.basename(body.name || "");
+  if (!slug || !name) {
+    return NextResponse.json({ error: "slug y name requeridos" }, { status: 400 });
+  }
+
+  const productsDir = path.join(process.cwd(), "public", "products");
+  const dir = path.join(productsDir, slug);
+  const filePath = path.join(dir, name);
+
+  // Security: ensure the resolved path stays inside the slug directory
+  if (!filePath.startsWith(dir + path.sep) && filePath !== dir) {
+    return NextResponse.json({ error: "path invalido" }, { status: 400 });
+  }
+
+  await fs.unlink(filePath);
+
+  // Re-number remaining images in sequence
+  const remaining = (await fs.readdir(dir)).filter(isImageFile).sort(sortImageNames);
+
+  const tempNames: string[] = [];
+  const exts: string[] = [];
+  for (let i = 0; i < remaining.length; i++) {
+    const ext = path.extname(remaining[i]) || ".png";
+    const tmp = `.tmp-del-${i}${ext}`;
+    await fs.rename(path.join(dir, remaining[i]), path.join(dir, tmp));
+    tempNames.push(tmp);
+    exts.push(ext);
+  }
+  for (let i = 0; i < tempNames.length; i++) {
+    await fs.rename(path.join(dir, tempNames[i]), path.join(dir, `${i + 1}${exts[i]}`));
+  }
+
+  return NextResponse.json({ ok: true });
+}
