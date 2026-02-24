@@ -7,45 +7,48 @@
         file_server
     }
 
-    # WebSocket para subastas en tiempo real
-    handle /api/ws/* {
-        reverse_proxy backend:8080 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-            transport http {
-                read_timeout 24h
-            }
-        }
-    }
-
-    @images path /api/admin/images /api/admin/images/*
-
-    # API → Go backend o Next.js según la ruta
-    route /api/* {
-        # Rutas de imágenes son Next.js API routes (no Go backend)
-        handle @images {
+    # route evalúa en ORDEN (a diferencia de handle que usa especificidad)
+    # Esto garantiza que las rutas más específicas se evalúen primero
+    route {
+        # Next.js API routes de gestión de imágenes (NO van al backend Go)
+        handle /api/admin/images {
             reverse_proxy web:3000 {
                 header_up Host {host}
                 header_up X-Real-IP {remote_host}
-                header_up X-Forwarded-For {remote_host}
             }
         }
-        handle {
+        handle /api/admin/images/* {
+            reverse_proxy web:3000 {
+                header_up Host {host}
+                header_up X-Real-IP {remote_host}
+            }
+        }
+
+        # WebSocket para subastas en tiempo real
+        handle /api/ws/* {
             reverse_proxy backend:8080 {
                 header_up Host {host}
                 header_up X-Real-IP {remote_host}
-                header_up X-Forwarded-For {remote_host}
+                transport http {
+                    read_timeout 24h
+                }
             }
         }
-    }
 
-    # Todo lo demás → Next.js
-    handle {
-        reverse_proxy web:3000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
+        # Resto de API → Go backend
+        handle /api/* {
+            reverse_proxy backend:8080 {
+                header_up Host {host}
+                header_up X-Real-IP {remote_host}
+            }
+        }
+
+        # Todo lo demás → Next.js
+        handle {
+            reverse_proxy web:3000 {
+                header_up Host {host}
+                header_up X-Real-IP {remote_host}
+            }
         }
     }
 
