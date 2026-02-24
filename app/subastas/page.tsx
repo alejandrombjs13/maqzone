@@ -28,7 +28,7 @@ export default async function SubastasPage() {
         </h1>
         <p className="mt-3 max-w-2xl text-sm text-sand/70 sm:text-base">
           Participa en subastas en tiempo real de maquinaria pesada, vehiculos y
-          equipos industriales. Pujas anonimas y competencia justa.
+          equipos industriales. Pujas anónimas y competencia justa.
         </p>
       </div>
 

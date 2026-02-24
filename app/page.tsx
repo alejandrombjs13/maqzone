@@ -38,14 +38,14 @@ const stats = [
 const steps = [
   { num: "01", title: "Registrate y valida tu cuenta", text: "Crea tu cuenta, envia tu documentacion (INE, RFC, constancia fiscal) y deposita tu garantia de participacion." },
   { num: "02", title: "Inspecciona el activo", text: "Agenda visita presencial o solicita el reporte de inspeccion completo: mecanica, horas, historial y fotos." },
-  { num: "03", title: "Puja en vivo o compra directo", text: "Participa en subastas en tiempo real o adquiere activos a precio fijo. Pujas anonimas y competencia justa." },
+  { num: "03", title: "Puja en vivo o compra directo", text: "Participa en subastas en tiempo real o adquiere activos a precio fijo. Pujas anónimas y competencia justa." },
   { num: "04", title: "Paga y retira en 5 dias", text: "Transferencia bancaria en 5 dias habiles. Prima del comprador incluida. Retiro coordinado por MAQZONE." },
 ];
 
 const valueProps = [
   { title: "Activo certificado", desc: "Inspeccion, horas y estado verificados." },
   { title: "Logistica resuelta", desc: "Importacion, transporte y entrega." },
-  { title: "Pujas anonimas", desc: "Competencia justa, sin manipulacion." },
+  { title: "Pujas anónimas", desc: "Competencia justa, sin manipulación." },
 ];
 
 /* ── Page ─────────────────────────────────────────────── */

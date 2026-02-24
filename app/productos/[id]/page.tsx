@@ -130,7 +130,7 @@ export default async function ProductoDetalle({
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.2em] text-sand/50 sm:text-xs">
-                    Ano del equipo
+                    Año del equipo
                   </p>
                   <p className="text-2xl font-semibold text-sand sm:text-3xl">
                     {listing.year}
@@ -194,7 +194,7 @@ export default async function ProductoDetalle({
             <div className="space-y-3">
               {[
                 ["Equipo", listing.title],
-                ["Ano", String(listing.year)],
+                ["Año", String(listing.year)],
                 ["Ubicacion", listing.location],
                 ["Disponibilidad", listing.status === "active" ? "Inmediata" : listing.status],
                 ["Certificacion", "Certificacion MAQZONE"],

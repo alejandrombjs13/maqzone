@@ -51,7 +51,7 @@ export default function ProductCard({
       )}
       <div className="mt-3 flex items-center justify-between sm:mt-4">
         <p className="text-[10px] text-sand/60 sm:text-sm">
-          Ano {listing.year}
+          Año {listing.year}
         </p>
         <p
           className={`font-semibold text-ember ${

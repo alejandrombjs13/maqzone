@@ -240,7 +240,7 @@ export default function CatalogoClient({
             <option value="recent">Mas recientes</option>
             <option value="price-asc">Precio: menor a mayor</option>
             <option value="price-desc">Precio: mayor a menor</option>
-            <option value="year-desc">Ano: mas reciente</option>
+            <option value="year-desc">Año: más reciente</option>
           </select>
         </div>
       </div>
