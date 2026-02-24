@@ -317,8 +317,19 @@ export default function AdminPage() {
         throw new Error(err.error || `Error ${res.status}`);
       }
       const ext = nextOrder[0] ? imageExt(nextOrder[0].name) : ".png";
-      updateForm("image_url", `/products/${selectedProduct}/1${ext}`);
-      showToast("Orden guardado");
+      const newImageUrl = `/products/${selectedProduct}/1${ext}`;
+      updateForm("image_url", newImageUrl);
+      // Auto-save image_url to DB so the catalog reflects the change immediately
+      if (form.id) {
+        const saveRes = await fetch(`${API_BASE}/api/admin/${endpoint}/${form.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", ...authHeaders() },
+          body: JSON.stringify({ ...form, image_url: newImageUrl }),
+        });
+        showToast(saveRes.ok ? "Principal actualizada en el catálogo" : "Orden guardado. Guarda el listado para aplicar al catálogo.");
+      } else {
+        showToast("Orden guardado");
+      }
       await loadImageCatalog();
     } catch (err: unknown) {
       setImagesMessage(err instanceof Error ? err.message : "Error al guardar el orden.");
