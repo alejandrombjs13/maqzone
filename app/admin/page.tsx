@@ -311,8 +311,8 @@ export default function AdminPage() {
         body: JSON.stringify({ slug: selectedProduct, order: nextOrder.map((img) => img.name) }),
       });
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "No se pudo guardar el orden");
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Error ${res.status}`);
       }
       const ext = nextOrder[0] ? imageExt(nextOrder[0].name) : ".png";
       updateForm("image_url", `/products/${selectedProduct}/1${ext}`);
@@ -369,7 +369,7 @@ export default function AdminPage() {
         headers: authHeaders(),
         body: fd,
       });
-      if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Error al subir"); }
+      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || `Error ${res.status}`); }
       const data = await res.json();
       if (!selectedProduct && slug) setSelectedProduct(slug);
       showToast(`${data.count} foto${data.count !== 1 ? "s" : ""} subida${data.count !== 1 ? "s" : ""}`);
@@ -387,7 +387,7 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ slug, name: imgName }),
       });
-      if (!res.ok) { const err = await res.json(); throw new Error(err.error || "Error"); }
+      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.error || `Error ${res.status}`); }
       setDeleteImageTarget(null);
       if (form.image_url?.includes(imgName)) updateForm("image_url", "");
       showToast("Foto eliminada");
