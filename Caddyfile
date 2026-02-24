@@ -19,21 +19,24 @@
         }
     }
 
-    # Next.js API routes (gestión de imágenes — NOT Go backend)
-    handle /api/admin/images* {
-        reverse_proxy web:3000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
-        }
-    }
+    @images path /api/admin/images /api/admin/images/*
 
-    # API → Go backend
-    handle /api/* {
-        reverse_proxy backend:8080 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-            header_up X-Forwarded-For {remote_host}
+    # API → Go backend o Next.js según la ruta
+    route /api/* {
+        # Rutas de imágenes son Next.js API routes (no Go backend)
+        handle @images {
+            reverse_proxy web:3000 {
+                header_up Host {host}
+                header_up X-Real-IP {remote_host}
+                header_up X-Forwarded-For {remote_host}
+            }
+        }
+        handle {
+            reverse_proxy backend:8080 {
+                header_up Host {host}
+                header_up X-Real-IP {remote_host}
+                header_up X-Forwarded-For {remote_host}
+            }
         }
     }
 
