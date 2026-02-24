@@ -1,54 +1,50 @@
 {$DOMAIN} {
     # Imágenes de productos — Caddy las sirve directo (sin pasar por Next.js)
-    # Cache de 1 año: el nombre del archivo no cambia, y si cambia se sube nuevo archivo
     handle /products/* {
         root * /srv
         header Cache-Control "public, max-age=31536000, immutable"
         file_server
     }
 
-    # route evalúa en ORDEN (a diferencia de handle que usa especificidad)
-    # Esto garantiza que las rutas más específicas se evalúen primero
-    route {
-        # Next.js API routes de gestión de imágenes (NO van al backend Go)
-        handle /api/admin/images {
-            reverse_proxy web:3000 {
-                header_up Host {host}
-                header_up X-Real-IP {remote_host}
+    # WebSocket para subastas en tiempo real
+    handle /api/ws/* {
+        reverse_proxy backend:8080 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            transport http {
+                read_timeout 24h
             }
         }
-        handle /api/admin/images/* {
-            reverse_proxy web:3000 {
-                header_up Host {host}
-                header_up X-Real-IP {remote_host}
-            }
-        }
+    }
 
-        # WebSocket para subastas en tiempo real
-        handle /api/ws/* {
-            reverse_proxy backend:8080 {
-                header_up Host {host}
-                header_up X-Real-IP {remote_host}
-                transport http {
-                    read_timeout 24h
-                }
-            }
+    # Next.js API routes de gestión de imágenes — deben ir ANTES de /api/*
+    # Caddy usa especificidad: /api/admin/images es más largo → mayor prioridad
+    handle /api/admin/images {
+        reverse_proxy web:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
         }
-
-        # Resto de API → Go backend
-        handle /api/* {
-            reverse_proxy backend:8080 {
-                header_up Host {host}
-                header_up X-Real-IP {remote_host}
-            }
+    }
+    handle /api/admin/images/* {
+        reverse_proxy web:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
         }
+    }
 
-        # Todo lo demás → Next.js
-        handle {
-            reverse_proxy web:3000 {
-                header_up Host {host}
-                header_up X-Real-IP {remote_host}
-            }
+    # Resto de API → Go backend
+    handle /api/* {
+        reverse_proxy backend:8080 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # Todo lo demás → Next.js
+    handle {
+        reverse_proxy web:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
         }
     }
 
