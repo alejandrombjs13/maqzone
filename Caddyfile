@@ -37,6 +37,9 @@
         }
     }
 
+    # HSTS: fuerza HTTPS en el browser para siempre (1 año)
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
     encode gzip
 
     log {
