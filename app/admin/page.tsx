@@ -207,6 +207,7 @@ export default function AdminPage() {
   const [imageOrder, setImageOrder] = useState<ImageItem[]>([]);
   const [imagesLoading, setImagesLoading] = useState(false);
   const [imagesMessage, setImagesMessage] = useState<string | null>(null);
+  const [catalogVersion, setCatalogVersion] = useState(0);
 
   // Upload
   const [uploadSlug, setUploadSlug] = useState("");
@@ -291,6 +292,7 @@ export default function AdminPage() {
       if (!res.ok) throw new Error("No se pudieron cargar imagenes");
       const data = await res.json();
       setImageCatalog(data.products || []);
+      setCatalogVersion((v) => v + 1);
       const fallback = data.products?.[0]?.slug || "";
       if (!selectedProduct && fallback) setSelectedProduct(fallback);
     } catch (err: unknown) {
@@ -316,7 +318,7 @@ export default function AdminPage() {
       }
       const ext = nextOrder[0] ? imageExt(nextOrder[0].name) : ".png";
       updateForm("image_url", `/products/${selectedProduct}/1${ext}`);
-      setImagesMessage("Orden actualizado.");
+      showToast("Orden guardado");
       await loadImageCatalog();
     } catch (err: unknown) {
       setImagesMessage(err instanceof Error ? err.message : "Error al guardar el orden.");
@@ -1192,7 +1194,8 @@ export default function AdminPage() {
                       {imageOrder.map((img, index) => (
                         <div key={img.name} className="relative rounded-xl border border-sand/10 bg-graphite/70 p-1.5">
                           <button type="button" onClick={() => updateForm("image_url", img.url)} className="relative block w-full overflow-hidden rounded-lg">
-                            <Image src={img.url} alt={img.name} width={200} height={150} className={`h-20 w-full object-cover ${index === 0 ? "ring-2 ring-cyan" : ""}`} />
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={`${img.url}?v=${catalogVersion}`} alt={img.name} className={`h-20 w-full object-cover ${index === 0 ? "ring-2 ring-cyan" : ""}`} />
                             {index === 0 && (
                               <span className="absolute left-1 top-1 rounded-full bg-cyan/80 px-1.5 py-0.5 text-[9px] font-semibold text-white">Principal</span>
                             )}
@@ -1237,7 +1240,8 @@ export default function AdminPage() {
                   <input id="admin-img" className={inputCls} value={form.image_url || ""} onChange={(e) => updateForm("image_url", e.target.value)} placeholder="/products/nombre-producto/1.jpg" />
                   {form.image_url && (
                     <div className="mt-2 overflow-hidden rounded-xl border border-sand/10 bg-steel">
-                      <Image src={form.image_url} alt="Preview" width={400} height={240} className="h-32 w-full object-cover" />
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={`${form.image_url}?v=${catalogVersion}`} alt="Preview" className="h-32 w-full object-cover" />
                     </div>
                   )}
                 </FieldInput>
