@@ -1,5 +1,6 @@
 {$DOMAIN} {
     # Imágenes de productos — Caddy las sirve directo (sin pasar por Next.js)
+    # Cache de 1 año: el nombre del archivo no cambia, y si cambia se sube nuevo archivo
     handle /products/* {
         root * /srv
         header Cache-Control "public, max-age=31536000, immutable"
@@ -11,40 +12,28 @@
         reverse_proxy backend:8080 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
             transport http {
                 read_timeout 24h
             }
         }
     }
 
-    # Next.js API routes de gestión de imágenes — deben ir ANTES de /api/*
-    # Caddy usa especificidad: /api/admin/images es más largo → mayor prioridad
-    handle /api/admin/images {
-        reverse_proxy web:3000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-        }
-    }
-    handle /api/admin/images/* {
-        reverse_proxy web:3000 {
-            header_up Host {host}
-            header_up X-Real-IP {remote_host}
-        }
-    }
-
-    # Resto de API → Go backend
+    # API → Go backend
     handle /api/* {
         reverse_proxy backend:8080 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
         }
     }
 
-    # Todo lo demás → Next.js
+    # Todo lo demás → Next.js (incluye /admin/files/* para gestión de imágenes)
     handle {
         reverse_proxy web:3000 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
         }
     }
 

@@ -284,7 +284,7 @@ export default function AdminPage() {
     setImagesLoading(true);
     setImagesMessage(null);
     try {
-      const res = await fetch("/api/admin/images", {
+      const res = await fetch("/admin/files", {
         headers: { ...authHeaders() },
         cache: "no-store",
       });
@@ -305,7 +305,7 @@ export default function AdminPage() {
     setImagesLoading(true);
     setImagesMessage(null);
     try {
-      const res = await fetch("/api/admin/images", {
+      const res = await fetch("/admin/files", {
         method: "POST",
         headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ slug: selectedProduct, order: nextOrder.map((img) => img.name) }),
@@ -364,7 +364,7 @@ export default function AdminPage() {
       const fd = new FormData();
       fd.append("slug", slug);
       for (let i = 0; i < files.length; i++) fd.append("files", files[i]);
-      const res = await fetch("/api/admin/images/upload", {
+      const res = await fetch("/admin/files/upload", {
         method: "POST",
         headers: authHeaders(),
         body: fd,
@@ -382,7 +382,7 @@ export default function AdminPage() {
     const slug = selectedProduct;
     if (!slug) return;
     try {
-      const res = await fetch("/api/admin/images", {
+      const res = await fetch("/admin/files", {
         method: "DELETE",
         headers: { "Content-Type": "application/json", ...authHeaders() },
         body: JSON.stringify({ slug, name: imgName }),
